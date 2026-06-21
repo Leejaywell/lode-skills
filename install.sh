@@ -21,7 +21,7 @@ cp -R "$SRC/agents/." "$DEST/agents/"
 
 echo
 echo "✅ Installed user-wide:"
-echo "   skills:  lode-spec lode-brief lode-design lode-plan lode-build lode-release lode-go lode-review lode-fix lode-skill lode-evolve"
+echo "   skills:  lode-recon lode-spec lode-brief lode-design lode-plan lode-build lode-release lode-drive lode-go lode-review lode-fix lode-skill lode-evolve"
 echo "   agents:  lode-review  lode-evolve"
 echo
 echo "Try it in any project:  /lode-spec   then   /lode-plan   then   /lode-go"
