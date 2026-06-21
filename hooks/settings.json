@@ -1,0 +1,25 @@
+{
+  "//": "Lodestar 门禁示例。把 hooks 块合并进项目 .claude/settings.json。command 路径指向本仓库 hooks/ 的真实位置。",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/hooks/lode-signal.sh\""
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/hooks/lode-gate.sh\""
+          }
+        ]
+      }
+    ]
+  }
+}
