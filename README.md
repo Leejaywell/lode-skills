@@ -56,6 +56,26 @@
 
 ---
 
+## 安装使用
+
+> 前置：[Claude Code](https://claude.com/claude-code)。技能与子代理装在**用户级**（`~/.claude/`，全局可用）；门禁与 `CLAUDE.md` 按**项目**装。
+
+**1. 装技能 + 子代理（一行）**
+```bash
+git clone https://github.com/Leejaywell/lode-skills.git
+cd lode-skills && bash install.sh
+```
+把 `skills/lode-*` 拷进 `~/.claude/skills/`、`agents/lode-*` 拷进 `~/.claude/agents/`。装好后任意项目里输 `/lode-spec`、`/lode-plan`、`/lode-go`… 即可调用。
+（只想装到当前项目：把 `skills/`、`agents/` 拷进项目的 `.claude/` 下即可。）
+
+**2. 给项目装确定性门禁（可选，推荐）**——在你的项目根目录：
+1. `cp -R <本仓库>/hooks ./hooks && chmod +x ./hooks/*.sh`（门禁脚本走 `$CLAUDE_PROJECT_DIR/hooks/`）。
+2. `cp <本仓库>/CLAUDE.md ./CLAUDE.md`（或合并进你已有的）。
+3. 把 `hooks/settings.json` 里的 `hooks` 块合并进项目 `.claude/settings.json`。
+4. 开发开始时按 `docs/templates/verify.sh` 落一个 `.lode/<project>/verify.sh`（封装编译+测试）。
+
+装好后：开发已开始的工作区收工前会自动跑 `verify.sh` + 校验审查标记，没过不许收工；纠正/不满会被采集成信号喂给自进化。
+
 ## 怎么用
 
 **Go 是循环的入口**。前面定的所有标准和规则，最后都靠一条 `Go` 交给 AI 跑。执行开发计划有三种方式：
