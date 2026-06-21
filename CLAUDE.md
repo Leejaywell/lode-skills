@@ -72,7 +72,7 @@
 - **Stop hook `lode-gate.sh`**：开发已开始（有 CHANGELOG）的工作区收工前，①实跑 `.lode/<project>/verify.sh`（编译+测试，退出码说话）②校验非空且不旧于 CHANGELOG 的 `REVIEW_PASSED` 标记，两层任一不过即卡死。门禁**不只信模型写的 flag**——编译/测试由程序实跑。
 - **UserPromptSubmit hook `lode-signal.sh`**：命中纠正/不满关键词就把信号追加进 `signals.jsonl`，喂给自进化。
 
-开发每个 Face 必走**四步审计**，按「确定性→判断」排序：`编译验证 → 测试完整性 → Code Review → 功能测试`。前两步确定性的交给 `verify.sh` 门禁实跑，后两步不确定的交给独立子 Agent / 人。全过才算 Done。
+开发每个 Face 必走**四步审计**，按「确定性→判断」排序：`编译验证 → 测试完整性 → Code Review → 功能测试`。前两步确定性的交给 `verify.sh` 门禁实跑，后两步不确定的交给独立子 Agent / 人。全过才算 Done。**测试完整性是 spec-bound**：测的是该 Face 在 plan 里**先于开发定**的「验收场景」（派生自验收标准），不是 builder 写完代码再凑的弱测试——这样测试绑需求、不绑实现，堵住"测试绿但功能跑偏"。
 
 **「完成」的定义随模式变**：
 - 绿地·单人：`verify.sh` 绿 + `REVIEW_PASSED`。

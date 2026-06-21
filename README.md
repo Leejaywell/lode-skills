@@ -88,20 +88,24 @@ cd lode-skills && bash install.sh
 
 ## 怎么用
 
-**Go 是循环的入口**。前面定的所有标准和规则，最后都靠一条 `Go` 交给 AI 跑。执行开发计划有三种方式：
+### A. 自主跑完（推荐）——一个目标，agent 跑到底
+```
+/lode-drive 把 <目标> 做完
+```
+`lode-drive` 自己判断**新/老项目**与**单人/团队**，拆里程碑→Face，逐个走四步审计+回归，维护进度账本（崩了能续、跑完能审计），偏离就重规划、卡住就熔断。你只在**审 PR**和**接熔断**时出现。
 
-1. **DevBuilder**：主 Agent 直接用 `lode-build` 写代码，跑完整个计划。
-2. **逐个 Go（最常用）**：`lode-go` 把第一个 Face 写成 Go，复制发它执行，循环到达成。
-3. **一条 Go 跑全部（最高效，熟练后）**：让 `lode-go` 按全部 Face 整体规划写一条 Go，一次性开发完。
-
-最小闭环：
+### B. 手动分步——想自己把着每一环
+绿地最小闭环：
 ```
 /lode-spec    # 逼问需求 → Product-Spec.md
-/lode-plan     # 拆 Face → DEV-PLAN.md
-/lode-go    # 生成 Go
-# 复制 Go 发给 AI 执行 → 自动开发 + 四步审计闭环
+/lode-plan    # 拆 Face（每个 Face 先定验收场景）→ DEV-PLAN.md
+/lode-go      # 生成单个 Face 的 Go，复制发它执行 → 四步审计闭环
 ```
-全链路：spec 前可先 `/lode-go` 把一句话想法写成 Go；plan 前插 `/lode-brief`(+可选 `/lode-design`)；收尾 `/lode-release`。
+- **老项目**：先 `/lode-recon` 出 `System-Map.md`，spec 自动走 delta（现状→目标 + 绝不能破坏）。
+- 全链路：plan 前可插 `/lode-brief`(+可选 `/lode-design`)；收尾 `/lode-release`（团队走 PR/CI）。
+- 执行单个 Face 的三种粒度：主 Agent 直接 `lode-build` 跑完计划 / 逐个 Face 写 Go（最常用）/ 一条 Go 跑全部（熟练后最高效）。
+
+> **测试绑需求**：每个 Face 的「验收场景」在 plan 阶段**先于开发定**，测试照场景写、审查照场景验——堵住"测试绿但功能跑偏"。
 
 ### 门禁与钩子（确定性交给程序）
 
