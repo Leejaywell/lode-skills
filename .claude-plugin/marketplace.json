@@ -9,7 +9,7 @@
     {
       "name": "lodestar",
       "source": ".",
-      "description": "14 个 lode-* 技能 + 独立审查子代理 + 确定性收工门禁。安装后命令为 /lodestar:lode-spec、/lodestar:lode-plan 等。",
+      "description": "13 个 lode-* 技能 + 独立审查子代理 + 确定性收工门禁。安装后命令为 /lodestar:lode-spec、/lodestar:lode-plan 等。",
       "category": "workflow",
       "keywords": ["workflow", "spec-driven", "pm", "agent"]
     }

@@ -35,3 +35,6 @@ description: "Lodestar 主线③设计稿与原型(可选)。基于 Design Brief
 - 原型是为对齐预期，不是最终产物——不要在这里堆生产级工程结构。
 - 不偏离 Design Brief 自由发挥；要改方向先回 `/lode-brief`。
 - 产出先给用户确认再进 `lode-plan`。
+
+## → 下一步
+原型确认 → `/lode-plan` 拆 Face。

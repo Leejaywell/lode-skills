@@ -2,67 +2,113 @@
 # Lodestar 收工门禁（Stop hook）。
 # 第一性原理：能让程序判断的，做成门禁卡死，不靠模型自觉，也不只信模型写的 flag。
 #
-# 这道门禁有两层，缺一不可：
-#   ① 确定性验证（硬）：跑 .lode/<project>/verify.sh（项目级编译+测试脚本），用退出码说话。
-#      —— "编译零报错 / 测试全过" 是最确定性的判断，必须由门禁实跑，而不是塞进模型自评的四步审计。
-#   ② 审查通过标记（软）：review-passed 存在、且新于最近一次开发(CHANGELOG)。
-#      —— 防止「改了没重审就收工」。标记须带可核验内容（被审 Face/commit 标识），不是空 touch。
+# 两层硬检查（只拦「开发已开始」=存在 changelog.md 的工作区；spec/plan 阶段放行）：
+#   ① 确定性验证：实跑 .lode/<p>/verify.sh（编译+全量测试），退出码说话。
+#      —— 指纹未变且上次已绿则跳过重跑（缓存,避免每次 Stop 都全量构建）。
+#   ② 审查通过：review-passed 非空，且其中含【当前代码指纹】——防「审完又改」、防空 touch / 伪造。
 #
-# 规则：只有「开发已经开始」（存在 changelog.md）的 Lodestar 工作区才拦。
-#       spec/design/plan 阶段（还没代码）放行。
+# 子命令：
+#   lode-gate.sh fingerprint   打印当前代码指纹（lode-review 把它写进 review-passed）
 #
 # 退出码：0 放行；2 阻止收工并把 stderr 反馈给模型继续干活。
-
+#   连续阻止 ≥ LODE_GATE_MAX_ATTEMPTS（默认 5）次 → 熔断：放行并交人工，防「昂贵的不完成」。
 set -euo pipefail
 
-# 取最近修改的 lode 工作区（按 mtime，而非字母序）
-LODE_DIR=$(ls -dt .lode/*/ 2>/dev/null | head -1 || true)
+# 锚定项目根（#7：cwd 不是根时,优先用 Claude 提供的项目目录）
+cd "${CLAUDE_PROJECT_DIR:-.}" 2>/dev/null || true
 
-# 没有 lode 工作区 => 不是 Lodestar 流程，放行
-[ -z "${LODE_DIR}" ] && exit 0
+# 选可用的 sha256 工具
+_sha() { if command -v shasum >/dev/null 2>&1; then shasum -a 256; else sha256sum; fi; }
 
-CHANGELOG="${LODE_DIR}changelog.md"
-PASS_MARK="${LODE_DIR}review-passed"
-VERIFY="${LODE_DIR}verify.sh"
-
-# 开发还没开始（无 CHANGELOG）=> 早期阶段，不拦
-[ -f "${CHANGELOG}" ] || exit 0
-
-# ① 确定性验证：有 verify.sh 就实跑，退出码非 0 直接卡死（编译/测试硬门禁）
-if [ -f "${VERIFY}" ]; then
-  if ! VERIFY_OUT=$(bash "${VERIFY}" 2>&1); then
-    echo "[Lodestar 门禁] 阻止收工：确定性验证 ${VERIFY} 失败（编译/测试未过）。" >&2
-    echo "--- verify.sh 输出（末尾 40 行）---" >&2
-    echo "${VERIFY_OUT}" | tail -40 >&2
-    echo "请修复到 verify.sh 退出码为 0 再收工。" >&2
-    exit 2
+# 代码指纹：git 项目用 HEAD+暂存+工作区改动（内容级,真准）;
+# 非 git 退化为工作区文件的「路径+大小+mtime」哈希（排除 .lode/.git,尽力而为）。
+fingerprint() {
+  if git rev-parse --git-dir >/dev/null 2>&1; then
+    { git rev-parse HEAD 2>/dev/null || true
+      git status --porcelain 2>/dev/null || true
+      git diff 2>/dev/null || true; } | _sha | awk '{print $1}'
+  else
+    # 非 git：对工作区文件【内容】做哈希（内容级,不靠 mtime,避免分钟精度漏检）。
+    # 排除运行期/构建产物目录,免得 verify 产物每次改指纹（无 .gitignore 意识,只能硬排常见目录）。
+    find . -type d \( -name .git -o -name .lode -o -name node_modules -o -name dist -o -name build \
+        -o -name target -o -name .next -o -name vendor -o -name __pycache__ \) -prune -o \
+      -type f -print0 2>/dev/null \
+      | LC_ALL=C sort -z | xargs -0 cat 2>/dev/null | _sha | awk '{print $1}'
   fi
-else
-  # 没有 verify.sh：lode-plan/lode-build 应在开发开始时落一个项目级编译+测试脚本。
-  echo "[Lodestar 门禁] 阻止收工：开发已开始但缺少确定性验证脚本 ${VERIFY}。" >&2
-  echo "请创建 ${VERIFY}（封装本项目的编译+测试命令，全过 exit 0），让编译/测试由门禁实跑而非模型口头自评。" >&2
-  exit 2
-fi
+}
 
-# ② 审查标记存在
-if [ ! -f "${PASS_MARK}" ]; then
-  echo "[Lodestar 门禁] 阻止收工：未发现审查通过标记 ${PASS_MARK}。" >&2
-  echo "请先用 lode-review 拆独立审查子 Agent 审查本轮变更；通过后写入 ${PASS_MARK}（内容写明被审 Face/commit 标识）再收工。" >&2
-  exit 2
-fi
+# 子命令：打印指纹供 lode-review 写入 review-passed
+if [ "${1:-}" = "fingerprint" ]; then fingerprint; exit 0; fi
 
-# ② 标记不能是空文件（防止 `touch review-passed` 自证空过）
-if [ ! -s "${PASS_MARK}" ]; then
-  echo "[Lodestar 门禁] 阻止收工：${PASS_MARK} 为空。" >&2
-  echo "标记必须写明本轮被审查的 Face/commit 标识（可核验），不接受空 touch。" >&2
-  exit 2
-fi
+# 消费 stdin（Stop hook 的 JSON），不阻塞、不依赖
+cat >/dev/null 2>&1 || true
 
-# ② 标记比 CHANGELOG 旧 => 有新改动未重新审查
-if [ "${CHANGELOG}" -nt "${PASS_MARK}" ]; then
-  echo "[Lodestar 门禁] 阻止收工：CHANGELOG 比审查标记新，存在未重新审查的改动。" >&2
-  echo "请重新审查后更新 ${PASS_MARK}。" >&2
-  exit 2
-fi
+# 收集所有「开发已开始」（有 changelog.md）的工作区（#3：遍历,不挑 mtime 最新那个）
+shopt -s nullglob 2>/dev/null || true
+STARTED=()
+for d in .lode/*/; do
+  [ -f "${d}changelog.md" ] && STARTED+=("$d")
+done
+# 没有任何已开发工作区 => 放行（spec/plan 阶段或非 Lodestar 项目）
+[ ${#STARTED[@]} -eq 0 ] && exit 0
 
-exit 0
+MAX_ATTEMPTS="${LODE_GATE_MAX_ATTEMPTS:-5}"
+ATTEMPTS_FILE=".lode/.gate-attempts"
+
+# 熔断计数（#5）：连续阻止累加,放行时清零
+block() {
+  local n=0; [ -f "$ATTEMPTS_FILE" ] && n=$(cat "$ATTEMPTS_FILE" 2>/dev/null || echo 0)
+  n=$((n + 1)); echo "$n" > "$ATTEMPTS_FILE" 2>/dev/null || true
+  if [ "$n" -ge "$MAX_ATTEMPTS" ]; then
+    echo "[Lodestar 熔断] 门禁已连续阻止 $n 次仍未过——停止再拦,交给你人工处理。" >&2
+    echo "门禁挡「坏的完成」,熔断挡「昂贵的不完成」。请看上面最后一次失败原因后介入。" >&2
+    rm -f "$ATTEMPTS_FILE" 2>/dev/null || true
+    exit 0
+  fi
+  exit 2
+}
+pass() { rm -f "$ATTEMPTS_FILE" 2>/dev/null || true; exit 0; }
+
+FP="$(fingerprint 2>/dev/null || true)"
+
+for LODE_DIR in "${STARTED[@]}"; do
+  VERIFY="${LODE_DIR}verify.sh"
+  PASS_MARK="${LODE_DIR}review-passed"
+  CACHE="${LODE_DIR}.verify-green"
+
+  # ① 确定性验证
+  if [ -f "${VERIFY}" ]; then
+    if [ -n "${FP}" ] && [ -f "${CACHE}" ] && [ "$(cat "${CACHE}" 2>/dev/null || true)" = "${FP}" ]; then
+      :   # 这个代码状态上次已验证通过 => 跳过重跑（#4 缓存）
+    elif VERIFY_OUT=$(bash "${VERIFY}" 2>&1); then
+      echo "${FP}" > "${CACHE}" 2>/dev/null || true
+    else
+      echo "[Lodestar 门禁] 阻止收工：${VERIFY} 失败（编译/测试未过）。" >&2
+      echo "--- verify.sh 输出（末尾 40 行）---" >&2
+      printf '%s\n' "${VERIFY_OUT}" | tail -40 >&2
+      block
+    fi
+  else
+    echo "[Lodestar 门禁] 阻止收工：开发已开始但缺少 ${VERIFY}。" >&2
+    echo "请创建 ${VERIFY}（封装本项目编译+全量测试,全过 exit 0;骨架见 docs/templates/verify.sh）。" >&2
+    block
+  fi
+
+  # ② 审查标记非空（#1 之外：空 touch 不算）
+  if [ ! -s "${PASS_MARK}" ]; then
+    echo "[Lodestar 门禁] 阻止收工：缺少非空的审查标记 ${PASS_MARK}。" >&2
+    echo "请用 lode-review 独立审查本轮变更,通过后把结论写入 ${PASS_MARK},并附当前代码指纹这一行：" >&2
+    echo "  tree: ${FP}" >&2
+    block
+  fi
+
+  # ② 标记必须含【当前】代码指纹（#2 防审完又改、#6 防伪造）
+  if [ -n "${FP}" ] && ! grep -qF "${FP}" "${PASS_MARK}"; then
+    echo "[Lodestar 门禁] 阻止收工：${PASS_MARK} 的代码指纹与当前不一致——代码在审查后又改过,需重新审查。" >&2
+    echo "重新审查通过后,把这一行更新进 ${PASS_MARK}：" >&2
+    echo "  tree: ${FP}" >&2
+    block
+  fi
+done
+
+pass

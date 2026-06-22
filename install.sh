@@ -38,8 +38,8 @@ chmod +x "$DEST/lode-hooks/"*.sh 2>/dev/null || true
 
 echo
 echo "✅ Installed user-wide:"
-echo "   skills:  lode-recon lode-spec lode-brief lode-design lode-plan lode-build lode-release lode-drive lode-go lode-review lode-fix lode-skill lode-evolve lode-init"
-echo "   agents:  lode-review  lode-evolve"
+echo "   skills:  lode-spec lode-brief lode-design lode-plan lode-build lode-release lode-drive lode-go lode-review lode-fix lode-skill lode-evolve lode-init"
+echo "   agents:  lode-review  lode-evolve  lode-recon"
 echo
 echo "Try it: run  /lode-init  in a project, then  /lode-spec  →  /lode-plan  →  /lode-go"
 echo

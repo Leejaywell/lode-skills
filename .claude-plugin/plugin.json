@@ -2,13 +2,13 @@
   "name": "lodestar",
   "displayName": "Lodestar",
   "version": "0.1.0",
-  "description": "结构化开发流程:把模糊想法逼问成可运行、可发布的产品。14 个 lode-* 技能(需求→设计→计划→开发→发布)+ 独立审查子代理 + 确定性收工门禁(编译/测试不过不许收工)。",
+  "description": "结构化开发流程:把模糊想法逼问成可运行、可发布的产品。13 个 lode-* 技能(需求→设计→计划→开发→发布)+ 独立审查子代理 + 确定性收工门禁(编译/测试不过不许收工)。",
   "author": {
     "name": "Jay",
     "url": "https://github.com/Leejaywell"
   },
   "homepage": "https://github.com/Leejaywell/lode-skills",
   "repository": "https://github.com/Leejaywell/lode-skills",
-  "keywords": ["workflow", "spec-driven", "pm", "greenfield", "brownfield", "agent", "lodestar"],
+  "keywords": ["workflow", "spec-driven", "pm", "agent", "lodestar"],
   "hooks": "./hooks/hooks.json"
 }
