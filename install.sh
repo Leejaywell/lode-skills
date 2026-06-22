@@ -21,15 +21,19 @@ cp -R "$SRC/agents/." "$DEST/agents/"
 
 echo
 echo "✅ Installed user-wide:"
-echo "   skills:  lode-recon lode-spec lode-brief lode-design lode-plan lode-build lode-release lode-drive lode-go lode-review lode-fix lode-skill lode-evolve"
+echo "   skills:  lode-recon lode-spec lode-brief lode-design lode-plan lode-build lode-release lode-drive lode-go lode-review lode-fix lode-skill lode-evolve lode-init"
 echo "   agents:  lode-review  lode-evolve"
 echo
-echo "Try it in any project:  /lode-spec   then   /lode-plan   then   /lode-go"
+echo "Try it: run  /lode-init  in a project, then  /lode-spec  →  /lode-plan  →  /lode-go"
 echo
 echo "── Optional: per-project deterministic gate ─────────────────────────────"
-echo "Run these in a project where you want the 'no wrap-up until build/test + review pass' gate:"
+echo "In a project where you want the 'no wrap-up until build/test + review pass' gate:"
 echo "   cp -R \"$SRC/hooks\" ./hooks && chmod +x ./hooks/*.sh"
-echo "   cp \"$SRC/CLAUDE.md\" ./CLAUDE.md        # or merge into your existing CLAUDE.md"
-echo "   # then merge the \"hooks\" block from ./hooks/settings.json into .claude/settings.json"
-echo "   # and create .lode/<project>/verify.sh from docs/templates/verify.sh"
+echo "   # merge the \"hooks\" block from ./hooks/settings.json into .claude/settings.json"
+echo "   # then run  /lode-init  to scaffold CLAUDE.md + .lode/<project>/verify.sh"
 echo "─────────────────────────────────────────────────────────────────────────"
+echo
+echo "Prefer a one-step install where the gate auto-activates? Install as a plugin instead:"
+echo "   /plugin marketplace add <this repo on GitHub  OR  ./local-clone>"
+echo "   /plugin install lodestar@lodestar      # commands become /lodestar:lode-spec …"
+echo "   (see README -> Plugin install.)"
