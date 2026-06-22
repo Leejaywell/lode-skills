@@ -18,6 +18,12 @@ description: "Lodestar 主线③设计稿与原型(可选)。基于 Design Brief
 - **先骨架，再增量**：先出最薄的可跑骨架，确认后再一层层加。**别一次让它出太复杂的**——容易崩，还会在各页藏一堆你没要的功能，回头删改非常麻烦。
 - 可借力已装的 `open-design` MCP 或 `frontend-design` / `imagegen-frontend-web` 等技能承载生成。
 
+## 怎么看（产出必须能直接看到）
+
+- **优先自包含、可双击打开**：能用纯 HTML（或 HTML + CDN）就别用要构建的；多屏就生成一个 `index.html` 把各屏链起来，双击即看。
+- **收尾必给一条查看命令**：静态能开的 → `open .lode/<project>/mockups/index.html`；必须跑服务的（React/打包类）→ 给启动命令（如 `npx serve .lode/<project>/mockups`）。
+- 可借 `screenshot` / `playwright` / `/run` 主动打开或截图，直接把界面摆到用户面前，别让用户自己猜怎么开。
+
 ## Done（什么算合格）
 
 产出 `.lode/<project>/mockups/`（HTML/JSX 等可在浏览器跑的高保真件），且满足：
@@ -27,9 +33,11 @@ description: "Lodestar 主线③设计稿与原型(可选)。基于 Design Brief
 - 与 product-spec 的范围一致，不多画范围外的页面。
 - **列出"额外加了什么"**：把 design-brief 之外自己补的元素单独列出，交用户确认/删，保持可控。
 - 产出的**设计代码可直接交给开发复用**（handoff 到终端 / 导出工程包放进项目目录），让 lode-build 在其基础上直接开发，而不是重写。
+- **给出查看方式**：收尾附一条能直接看到原型的命令（`open …/index.html` 或启动命令），用户点一下就能看。
 
 ## Guardrails（红线）
 
+- **看不到 = 没做完**：给不出查看方式、或产物打不开，不算 Done。
 - 这是**可选环**：界面不关键时直接跳过，不要为做而做。
 - **不偷加功能**：超出 design-brief 的元素必须显式标出，不默默塞进去。
 - 原型是为对齐预期，不是最终产物——不要在这里堆生产级工程结构。
