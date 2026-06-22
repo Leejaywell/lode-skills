@@ -17,7 +17,7 @@ description: "Lodestar 主线①需求收集。把模糊想法逼问成可开发
 
 进项目先**自动**把 Lodestar 跑循环要的两样备齐，不让用户判断"什么时候装":
 
-1. **规则 `CLAUDE.md`**：项目根没有就**先告知用户一句、再铺一份**——来源：插件装 `${CLAUDE_PLUGIN_ROOT}/CLAUDE.md`、脚本装 `~/.claude/lodestar/CLAUDE.md`（都找不到就问用户 Lodestar 装哪）。已有则直接用、不覆盖。**注意**：项目 `CLAUDE.md` 一般在会话开始时加载，中途铺的要**下个 session 才全程生效**；本 session 的元规则靠技能正文 + 门禁兜底——铺完跟用户说一句"规则已就位，新开会话后全程生效"。
+1. **规则 `CLAUDE.md`**：项目根没有就**先告知用户一句、再铺一份**——来源：插件装 `${CLAUDE_PLUGIN_ROOT}/CLAUDE.md`、脚本装 `~/.claude/lodestar/CLAUDE.md`（都找不到就问用户 Lodestar 装哪）。**项目根已有同名 `CLAUDE.md` 就绝不动它**——那很可能是用户自己项目的规则：不覆盖、不静默改；告知用户「检测到你已有 CLAUDE.md」，经同意再把 Lodestar 规则以 `<!-- LODESTAR:BEGIN/END -->` 包块**追加**进去（可整块移除），未同意就保持原样、本 session 靠技能+门禁兜底。**注意**：项目 `CLAUDE.md` 一般在会话开始时加载，中途铺的要**下个 session 才全程生效**；本 session 的元规则靠技能正文 + 门禁兜底——铺完跟用户说一句"规则已就位，新开会话后全程生效"。
 2. **现状图 `system-map.md`**：见下表按情况备好。（`verify.sh` 不在这里铺——它由 `lode-build` 在开发真正开始那一刻用真实编译/测试命令自动写。）
 
 > 这些都是**流程自动做**的,不是甩给用户的前置命令。想手动一次性铺,可选 `/lode-init`（一般用不到）。

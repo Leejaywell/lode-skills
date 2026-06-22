@@ -60,12 +60,16 @@ except FileNotFoundError:
 except Exception:
     sys.exit(3)  # unparseable settings — don't clobber
 hooks = s.setdefault("hooks", {})
+changed = False
 for event, cmd in cmds.items():
     arr = hooks.setdefault(event, [])
     if any(h.get("command") == cmd for g in arr for h in g.get("hooks", [])):
         continue  # already wired (idempotent)
-    arr.append({"hooks": [{"type": "command", "command": cmd}]})
-if os.path.exists(path): shutil.copy(path, path + ".bak")
+    arr.append({"hooks": [{"type": "command", "command": cmd}]}); changed = True
+if not changed:
+    sys.exit(0)  # already wired — leave settings.json AND the pristine .bak untouched
+if os.path.exists(path) and not os.path.exists(path + ".bak"):
+    shutil.copy(path, path + ".bak")  # back up the pristine, pre-Lodestar settings once (never overwrite it)
 with open(path, "w") as f:
     json.dump(s, f, indent=2, ensure_ascii=False); f.write("\n")
 PY
