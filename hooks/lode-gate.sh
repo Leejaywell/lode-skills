@@ -20,13 +20,16 @@ cd "${CLAUDE_PROJECT_DIR:-.}" 2>/dev/null || true
 # 选可用的 sha256 工具
 _sha() { if command -v shasum >/dev/null 2>&1; then shasum -a 256; else sha256sum; fi; }
 
-# 代码指纹：git 项目用 HEAD+暂存+工作区改动（内容级,真准）;
-# 非 git 退化为工作区文件的「路径+大小+mtime」哈希（排除 .lode/.git,尽力而为）。
+# 代码指纹：git 项目用 HEAD + 暂存内容 + 工作区改动（内容级,真准）。
+#   必须排除 .lode/ 自身——门禁会往 .lode 写 review-passed/.verify-green/.gate-attempts,
+#   若不排除,这些记账文件（用户没 gitignore .lode 时以未跟踪态出现在 porcelain）会反过来改指纹,
+#   造成「写完标记 → 下次指纹已变 → 审完即失配」的死锁,只能等熔断。非 git 分支同样硬排 .lode。
 fingerprint() {
   if git rev-parse --git-dir >/dev/null 2>&1; then
     { git rev-parse HEAD 2>/dev/null || true
-      git status --porcelain 2>/dev/null || true
-      git diff 2>/dev/null || true; } | _sha | awk '{print $1}'
+      git status --porcelain -- . ':(exclude).lode' 2>/dev/null || true
+      git diff            -- . ':(exclude).lode' 2>/dev/null || true
+      git diff --cached   -- . ':(exclude).lode' 2>/dev/null || true; } | _sha | awk '{print $1}'
   else
     # 非 git：对工作区文件【内容】做哈希（内容级,不靠 mtime,避免分钟精度漏检）。
     # 排除运行期/构建产物目录,免得 verify 产物每次改指纹（无 .gitignore 意识,只能硬排常见目录）。

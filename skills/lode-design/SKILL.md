@@ -27,7 +27,7 @@ description: "Lodestar 主线③设计稿与原型(可选)。基于 Design Brief
 ## Done（什么算合格）
 
 产出 `.lode/mockups/`（HTML/JSX 等可在浏览器跑的高保真件），且满足：
-- 严格落地 Design Brief 的 token 与设计方向，不另起一套风格。
+- 严格落地 Design Brief 的设计变量（design token）与设计方向，不另起一套风格。
 - 覆盖核心流程的关键页面与关键状态（空/载入/错误）。
 - 原型可点击跑通主流程，不是一堆死图。
 - 与 spec 的范围一致，不多画范围外的页面。
