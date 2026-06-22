@@ -140,10 +140,10 @@ curl -fsSL https://raw.githubusercontent.com/Leejaywell/lode-skills/main/install
 
 | 概念 | Claude Code 机制 | 本仓库位置 |
 |---|---|---|
-| 14 个技能 | `SKILL.md` 技能 | `skills/lode-*` |
+| 13 个技能 | `SKILL.md` 技能 | `skills/lode-*` |
 | 顶层规则 | `CLAUDE.md` | `CLAUDE.md` |
-| 独立审查子代理 | `Agent` 工具 + 子代理 | `agents/lode-review.md` |
+| 独立子代理（审查 / 代码侦察 / 进化） | `Agent` 工具 + 子代理 | `agents/lode-{review,recon,evolve}.md` |
 | 确定性规则 → 门禁 | **Hooks**（插件 `hooks/hooks.json` / 项目 `.claude/settings.json`） | `hooks/` |
 | 自进化（signals→proposals→规则库） | `CLAUDE.md` 规则库 + `lode-evolve` | `CLAUDE.md` + `skills/lode-evolve` |
-| 文档驱动 | 运行期 artifacts | `.lode/`（`product-spec → design-brief → dev-plan → code → changelog`） |
+| 文档驱动 | 运行期 artifacts | `.lode/`（`system-map → product-spec → design-brief → dev-plan → code → changelog`） |
 | Go = 目标+标准+验收+约束+执行策略 | 结构化 Go 指令 | `skills/lode-go` |
