@@ -1,11 +1,11 @@
 ---
 name: lode-skill
-description: "Lodestar 扩展技能·造新技能(第 11 个)。把一项能力写成一个新 Skill。当用户需要给系统或产品加一项新能力、要新建/改写一个 SKILL.md 时使用。Trigger: /lode-skill"
+description: "Lodestar 扩展技能·造新技能。把一项能力写成一个新 Skill。当用户需要给系统或产品加一项新能力、要新建/改写一个 SKILL.md 时使用。Trigger: /lode-skill"
 ---
 
 # Skill Builder（造新技能）
 
-扩展技能。把一项能力沉淀成一个新的 `SKILL.md`。范式里第 11 个技能。
+扩展技能。把一项能力沉淀成一个新的 `SKILL.md`。范式里专门用来"造技能"的技能。
 
 ## Usage（什么时候用）
 
