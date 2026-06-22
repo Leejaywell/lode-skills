@@ -124,6 +124,8 @@ curl -fsSL https://raw.githubusercontent.com/Leejaywell/lode-skills/main/install
 
 从零新建走最简流程；要**改现有代码**、或**多人协作**，才上更重的护栏。**自动跑 ≠ 没人管**：即便用 `lode-auto` 全程自动，你仍要在「审 PR」和「接住熔断」两处出现。
 
+> **小活就轻走**：改十行 / 配置这种，spec 一句话、plan 一个切片、跳过设计都行——门禁只在开发开始才咬；大活 / 老项目 / 团队才上全套。
+
 ---
 
 ## 设计原理：三条铁律
@@ -140,6 +142,6 @@ curl -fsSL https://raw.githubusercontent.com/Leejaywell/lode-skills/main/install
 | 顶层规则 | `CLAUDE.md` | `CLAUDE.md` |
 | 独立子代理（审查 / 代码侦察 / 进化） | `Agent` 工具 + 子代理 | `agents/lode-{review,recon,evolve}.md` |
 | 确定性规则 → 门禁 | **Hooks**（插件 `hooks/hooks.json` / 项目 `.claude/settings.json`） | `hooks/` |
-| 自进化（signals→proposals→规则库） | `CLAUDE.md` 规则库 + `lode-evolve` | `CLAUDE.md` + `skills/lode-evolve` |
+| 自进化（signals→proposals→规则库） | `CLAUDE.md` 规则库 + `lode-evolve`（开局 hook 自动提醒） | `CLAUDE.md` + `skills/lode-evolve` |
 | 文档驱动 | 运行期 artifacts | `.lode/`（`system-map → product-spec → design-brief → dev-plan → code → changelog`） |
 | 执行令 = 目标+标准+验收+约束+执行策略 | 结构化执行令 | `skills/lode-order` |
