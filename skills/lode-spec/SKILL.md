@@ -104,4 +104,6 @@ description: "Lodestar 主线①需求收集。把模糊想法追问成可开发
 - 写完先给用户确认再进下一环。
 
 ## → 下一步
-需求定了 → `/lode-plan` 拆切片(界面是成败关键可先 `/lode-brief` 做设计)。
+需求定了,二选一:
+- 想一步步盯 → `/lode-plan` 拆切片(界面是成败关键可先 `/lode-brief` 做设计)。
+- 想 agent 自动跑完剩下的 → `/lode-auto`(它会**直接拿这份 `product-spec.md` 当输入**拆计划、逐切片 build 到底,不重新问需求)。
