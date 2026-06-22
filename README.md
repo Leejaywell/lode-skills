@@ -101,7 +101,7 @@ curl -fsSL https://raw.githubusercontent.com/Leejaywell/lode-skills/main/install
 
 - **插件装**：`/plugin uninstall lodestar@lodestar`，再 `/plugin marketplace remove lodestar`。
 - **脚本装**：`bash ~/.claude/lode-uninstall.sh`（安装时已放好，离线可用；或远程 `curl -fsSL https://raw.githubusercontent.com/Leejaywell/lode-skills/main/uninstall.sh | bash`）。它删掉 Lodestar 的技能/子代理/门禁脚本/源资产，并**把门禁从 `~/.claude/settings.json` 摘掉**——只摘我们这两条，你别的 hooks 原样保留，原文件备份 `.bak`。
-- 两种方式都**不碰**你项目里的 `.lode/`、项目 `CLAUDE.md`、`verify.sh`（那是你的产物）——想清，在项目里自己 `rm -rf .lode`。
+- 默认都**不碰**你项目里的 `.lode/`、项目 `CLAUDE.md`、`verify.sh`（那是你的产物）。想连产物一起清：在该项目目录里跑 `bash ~/.claude/lode-uninstall.sh --purge-project`（删**当前项目**的 `.lode/`，交互运行先确认；项目根 `CLAUDE.md` 仍不动），或直接 `rm -rf .lode`。
 
 ---
 

@@ -1,13 +1,16 @@
 #!/usr/bin/env bash
-# Lodestar 卸载器(脚本装用)。只移除用户级的 Lodestar 文件 + 把门禁从 settings.json 摘掉。
-# 你项目里的 .lode/、项目 CLAUDE.md、verify.sh 是你的产物,绝不动——要删自己删。
+# Lodestar 卸载器(脚本装用)。移除用户级 Lodestar 文件 + 把门禁从 settings.json 摘掉。
+# 默认**不动**你项目里的 .lode/、项目 CLAUDE.md、verify.sh(那是你的产物)。
+# 加 --purge-project:额外删【当前目录】的 .lode/(交互运行会先确认;项目根 CLAUDE.md 仍不动)。
 #
 # 用法:
-#   bash ~/.claude/lode-uninstall.sh                 # 安装后留在这,离线可用
-#   curl -fsSL https://raw.githubusercontent.com/Leejaywell/lode-skills/main/uninstall.sh | bash
-#   CLAUDE_HOME=/path bash uninstall.sh              # 自定义 Claude home
+#   bash ~/.claude/lode-uninstall.sh                      # 只卸工具
+#   bash ~/.claude/lode-uninstall.sh --purge-project      # 顺带清当前项目的 .lode/
+#   curl -fsSL https://raw.githubusercontent.com/Leejaywell/lode-skills/main/uninstall.sh | bash -s -- --purge-project
+#   CLAUDE_HOME=/path bash uninstall.sh                   # 自定义 Claude home
 set -euo pipefail
 DEST="${CLAUDE_HOME:-$HOME/.claude}"
+PURGE=0; if [ "${1:-}" = "--purge-project" ]; then PURGE=1; fi
 
 # 1) 从 settings.json 摘掉 Lodestar 门禁(只删我们这两条,其它 hooks 原样保留;空数组顺手清掉)
 if [ -f "$DEST/settings.json" ] && command -v python3 >/dev/null 2>&1; then
@@ -41,11 +44,25 @@ fi
 rm -rf "$DEST/lode-hooks" "$DEST/lodestar"
 rm -rf "$DEST"/skills/lode-* 2>/dev/null || true
 rm -f "$DEST"/agents/lode-review.md "$DEST"/agents/lode-recon.md "$DEST"/agents/lode-evolve.md 2>/dev/null || true
-
 echo "✅ 已从 $DEST 移除 Lodestar(技能/子代理/门禁脚本/源资产)。"
-echo "   你项目里的 .lode/、项目 CLAUDE.md、verify.sh **没动**——想清就在该项目里自己删:"
-echo "      rm -rf .lode   # 运行期产物;CLAUDE.md/verify.sh 视情况手动删"
+
+# 3) 可选:清【当前目录】的 .lode/(运行期文档)
+if [ "$PURGE" = "1" ]; then
+  if [ -d ".lode" ]; then
+    ans=yes
+    if [ -t 0 ]; then
+      printf "再删【当前目录】的 ./.lode(本项目所有运行期文档,不可恢复)?[y/N] " >&2
+      read -r reply; case "$reply" in y|Y|yes|YES) ans=yes;; *) ans=no;; esac
+    fi
+    if [ "$ans" = "yes" ]; then rm -rf ./.lode && echo "→ 已删 ./.lode"; else echo "→ 跳过 ./.lode"; fi
+  else
+    echo "→ 当前目录没有 ./.lode,无需清。"
+  fi
+  echo "   注:项目根 CLAUDE.md / verify.sh 仍未动(可能是你自己的规则)——要删请自己删。"
+else
+  echo "   你项目里的 .lode/、CLAUDE.md、verify.sh **没动**。想连产物一起清:在项目目录里 \`rm -rf .lode\`,或加 --purge-project 重跑。"
+fi
 echo "   (插件装的话改用:/plugin uninstall lodestar@lodestar 和 /plugin marketplace remove lodestar)"
 
-# 3) 最后删掉卸载器自身(放在 $DEST 根,不在被删目录里)
-rm -f "$0" 2>/dev/null || true
+# 4) 最后删掉卸载器自身(仅当 $0 确是本脚本的真实路径时,避免 curl|bash 下误删)
+case "$0" in */lode-uninstall.sh) rm -f "$0" 2>/dev/null || true ;; esac
