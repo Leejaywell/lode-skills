@@ -1,6 +1,6 @@
 # system-map — <项目名>
 
-> 由 lode-spec 开局建立、lode-build 每个 Face 后更新（任何项目都有的现状活地图）。落地路径：`.lode/<project>/system-map.md`
+> 由 lode-spec 开局建立、lode-build 每个切片后更新（任何项目都有的现状活地图）。落地路径：`.lode/<project>/system-map.md`
 > 作用：让 spec 知道现状、plan 能做影响分析、build 改动"长得像现有代码"。
 
 ## 架构地图

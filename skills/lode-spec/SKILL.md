@@ -87,4 +87,4 @@ description: "Lodestar 主线①需求收集。把模糊想法逼问成可开发
 - 写完先给用户确认再进下一环。
 
 ## → 下一步
-需求定了 → `/lode-plan` 拆 Face(界面是成败关键可先 `/lode-brief` 做设计)。
+需求定了 → `/lode-plan` 拆切片(界面是成败关键可先 `/lode-brief` 做设计)。

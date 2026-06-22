@@ -1,7 +1,7 @@
 # CONVENTIONS — 通用写作与编程规范
 
 > 落地路径：项目根目录 `conventions.md`。
-> 与 `CLAUDE.md` 的区别：`CLAUDE.md` 管**流程怎么跑**；这里管**代码/文案长什么样**——跨所有 Face 复用的项目级规范。
+> 与 `CLAUDE.md` 的区别：`CLAUDE.md` 管**流程怎么跑**；这里管**代码/文案长什么样**——跨所有切片复用的项目级规范。
 > 在 Claude Code 里也可直接复用已装的 ECC rules（`~/.claude/rules/...`），此文件只补项目特有项。
 
 ## 代码

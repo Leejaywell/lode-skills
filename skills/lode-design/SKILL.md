@@ -37,4 +37,4 @@ description: "Lodestar 主线③设计稿与原型(可选)。基于 Design Brief
 - 产出先给用户确认再进 `lode-plan`。
 
 ## → 下一步
-原型确认 → `/lode-plan` 拆 Face。
+原型确认 → `/lode-plan` 拆切片。
