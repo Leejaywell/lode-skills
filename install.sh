@@ -40,6 +40,8 @@ echo "→ Installing source assets →  $DEST/lodestar/   (CLAUDE.md + templates
 mkdir -p "$DEST/lodestar"
 cp "$SRC/CLAUDE.md" "$DEST/lodestar/CLAUDE.md"
 cp -R "$SRC/docs/templates" "$DEST/lodestar/templates"
+cp "$SRC/uninstall.sh" "$DEST/lode-uninstall.sh" 2>/dev/null || true
+chmod +x "$DEST/lode-uninstall.sh" 2>/dev/null || true
 
 # Auto-wire the gate into user-level settings (~/.claude/settings.json) so it's active in EVERY
 # project with no per-project step — just like the plugin. The gate exit-passes when there's no
@@ -89,3 +91,5 @@ fi
 echo
 echo "Done. In any project just run  /lode-spec  (or /lode-drive) — CLAUDE.md / verify.sh / the gate are provisioned automatically; you don't set anything up."
 echo "(The plugin install gives the same thing with namespaced /lodestar:lode-spec commands — see README.)"
+echo
+echo "To remove Lodestar later (un-wires the gate too):  bash \"$DEST/lode-uninstall.sh\""
