@@ -80,7 +80,7 @@ fi
 
 echo
 echo "✅ Installed user-wide:"
-echo "   skills:  lode-spec lode-brief lode-design lode-plan lode-build lode-release lode-drive lode-go lode-review lode-fix lode-skill lode-evolve lode-init"
+echo "   skills:  lode-spec lode-brief lode-design lode-plan lode-build lode-release lode-auto lode-order lode-review lode-fix lode-skill lode-evolve lode-init"
 echo "   agents:  lode-review  lode-evolve  lode-recon"
 if [ "$GATE_WIRED" = "1" ]; then
   echo "   gate:    wired into $DEST/settings.json  (active in every project; backup: settings.json.bak)"
@@ -89,7 +89,7 @@ else
   echo "            To wire by hand: merge the \"hooks\" block of $DEST/lode-hooks/settings.json into $DEST/settings.json."
 fi
 echo
-echo "Done. In any project just run  /lode-spec  (or /lode-drive) — CLAUDE.md / verify.sh / the gate are provisioned automatically; you don't set anything up."
+echo "Done. In any project just run  /lode-spec  (or /lode-auto) — CLAUDE.md / verify.sh / the gate are provisioned automatically; you don't set anything up."
 echo "(The plugin install gives the same thing with namespaced /lodestar:lode-spec commands — see README.)"
 echo
 echo "To remove Lodestar later (un-wires the gate too):  bash \"$DEST/lode-uninstall.sh\""
