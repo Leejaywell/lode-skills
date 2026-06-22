@@ -1,10 +1,10 @@
 # DEV PLAN — <项目名>
 
-> 由 lode-plan 产出。落地路径：`.lode/<project>/DEV-PLAN.md`
+> 由 lode-plan 产出。落地路径：`.lode/<project>/dev-plan.md`
 > Face = 纵向可验收切片：做完能编译、能跑、能独立验收。
 
 ## 模式
-- 绿地 / 棕地：<棕地需先有 System-Map.md>
+- 绿地 / 棕地：<棕地需先有 system-map.md>
 - 单人 / 团队：<团队走 PR/CI 门禁>
 
 ## 技术选型 & 关键决策

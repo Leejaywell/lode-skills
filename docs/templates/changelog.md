@@ -1,6 +1,6 @@
 # CHANGELOG — <项目名>
 
-> 由 lode-build 每个 Face 收工时追加。落地路径：`.lode/<project>/CHANGELOG.md`
+> 由 lode-build 每个 Face 收工时追加。落地路径：`.lode/<project>/changelog.md`
 > 作用：跨环节不丢上下文 · 新 Session 快速接续 · 变更有据可查。
 
 ## [Face N] <标题> — <日期>

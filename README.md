@@ -22,7 +22,7 @@
 | 确定性规则 → 门禁 | **Hooks**（`.claude/settings.json`） | `hooks/` |
 | 自进化（signals→proposals→规则库） | `CLAUDE.md` 规则库 + Evolution Runner | `CLAUDE.md` + `skills/lode-evolve` |
 | Skill 只写 Usage/Done/Guardrails | Skill frontmatter + 极简正文 | 每个 `SKILL.md` |
-| 文档驱动（Product-Spec→Brief→Plan→Code→Changelog） | 仓库内 artifacts | `.lode/` 运行期产物 |
+| 文档驱动（product-spec→Brief→Plan→Code→Changelog） | 仓库内 artifacts | `.lode/` 运行期产物 |
 | Go = 目标+标准+验收+约束+执行策略 | 结构化 Go 指令 | `skills/lode-go` |
 
 > 装机结构：skill 放 `~/.claude/skills/`（或项目 `.claude/skills/`），子代理放 `.claude/agents/`，hook 写 `.claude/settings.json`，顶层规则写 `CLAUDE.md`。
@@ -37,12 +37,12 @@
 
 | # | 命令（= 技能名） | 干什么 | 产出 |
 |---|---|---|---|
-| 0 | `/lode-recon` | **（棕地）** 摸清现有架构/约定/命令/基线 | `System-Map.md` |
-| 1 | `/lode-spec` | 把模糊想法**逼问**成可开发需求（棕地走 delta） | `Product-Spec.md` |
-| 2 | `/lode-brief` | 把"感觉"翻译成具体设计决策（可选） | `Design-Brief.md` |
+| 0 | `/lode-recon` | **（棕地）** 摸清现有架构/约定/命令/基线 | `system-map.md` |
+| 1 | `/lode-spec` | 把模糊想法**逼问**成可开发需求（棕地走 delta） | `product-spec.md` |
+| 2 | `/lode-brief` | 把"感觉"翻译成具体设计决策（可选） | `design-brief.md` |
 | 3 | `/lode-design` | 出高保真设计 / 可交互原型（可选） | 设计稿/原型 |
-| 4 | `/lode-plan` | 拆 Face（棕地带影响分析/迁移/基线） | `DEV-PLAN.md` |
-| 5 | `/lode-build` | 按计划开发，走四步审计闭环 | 代码 + `CHANGELOG.md` |
+| 4 | `/lode-plan` | 拆 Face（棕地带影响分析/迁移/基线） | `dev-plan.md` |
+| 5 | `/lode-build` | 按计划开发，走四步审计闭环 | 代码 + `changelog.md` |
 | 6 | `/lode-release` | 隐私审计 + 打包发布（团队走 PR/CI） | Release |
 
 扩展（按需）：
@@ -62,7 +62,7 @@
 
 精简主线为**单人 · 绿地 · 0→1** 调校；靠**两个模式开关**扩到老项目与团队（`lode-drive` 开局自动设定）：
 - **绿地 ↔ 棕地**：老项目先 `/lode-recon` 出系统地图，spec 走 delta，plan 做影响分析/迁移/基线，verify 跑**全量回归**。
-- **单人 ↔ 团队**：单人本地 `REVIEW_PASSED` 门禁；团队/长生命周期切 **PR/CI 门禁**，子代理审查降为 PR 前过滤（不替代人审）。
+- **单人 ↔ 团队**：单人本地 `review-passed` 门禁；团队/长生命周期切 **PR/CI 门禁**，子代理审查降为 PR 前过滤（不替代人审）。
 - **安全/合规**：再加强制安全审 + 需求-代码-测试可追溯。
 - 愿景：**设一个目标 → agent 自主跑完 → 新老通吃**。自主 ≠ 无人——人只在「审 PR」「接熔断」两处出现。绿地仍轻，老项目/团队才上重护栏。
 
@@ -97,11 +97,11 @@ cd lode-skills && bash install.sh
 ### B. 手动分步——想自己把着每一环
 绿地最小闭环：
 ```
-/lode-spec    # 逼问需求 → Product-Spec.md
-/lode-plan    # 拆 Face（每个 Face 先定验收场景）→ DEV-PLAN.md
+/lode-spec    # 逼问需求 → product-spec.md
+/lode-plan    # 拆 Face（每个 Face 先定验收场景）→ dev-plan.md
 /lode-go      # 生成单个 Face 的 Go，复制发它执行 → 四步审计闭环
 ```
-- **老项目**：先 `/lode-recon` 出 `System-Map.md`，spec 自动走 delta（现状→目标 + 绝不能破坏）。
+- **老项目**：先 `/lode-recon` 出 `system-map.md`，spec 自动走 delta（现状→目标 + 绝不能破坏）。
 - 全链路：plan 前可插 `/lode-brief`(+可选 `/lode-design`)；收尾 `/lode-release`（团队走 PR/CI）。
 - 执行单个 Face 的三种粒度：主 Agent 直接 `lode-build` 跑完计划 / 逐个 Face 写 Go（最常用）/ 一条 Go 跑全部（熟练后最高效）。
 
@@ -111,7 +111,7 @@ cd lode-skills && bash install.sh
 
 把 `hooks/`（`lode-gate.sh` + `lode-signal.sh` + `settings.json` 的 hooks 块）合并进项目 `.claude/settings.json`：
 
-- **Stop 门禁 `lode-gate.sh`**：开发已开始的工作区收工前，① 实跑 `.lode/<project>/verify.sh`（编译+测试，退出码说话）② 校验非空且不旧于 CHANGELOG 的 `REVIEW_PASSED` 标记。**编译/测试由程序实跑，不只信模型写的 flag。**
+- **Stop 门禁 `lode-gate.sh`**：开发已开始的工作区收工前，① 实跑 `.lode/<project>/verify.sh`（编译+测试，退出码说话）② 校验非空且不旧于 CHANGELOG 的 `review-passed` 标记。**编译/测试由程序实跑，不只信模型写的 flag。**
 - **UserPromptSubmit 钩子 `lode-signal.sh`**：命中纠正/不满关键词，自动把信号追加进 `signals.jsonl`，喂给自进化。
 - 开发第一个 Face 前，按 `docs/templates/verify.sh` 落一个项目级 `verify.sh`（封装本项目的编译+测试命令）。
 

@@ -1,13 +1,13 @@
 # GOAL — <目标名>
 
-> 由 lode-drive 产出。落地路径：`.lode/<goal>/GOAL.md`
-> 这是自主驱动的总目标（区别于 GO.md：GO 是单个 Face 的执行指令，GOAL 是整条循环的终点）。
+> 由 lode-drive 产出。落地路径：`.lode/<project>/goal.md`
+> 这是自主驱动的总目标（区别于 go.md：GO 是单个 Face 的执行指令，GOAL 是整条循环的终点）。
 
 ## 目标
 一句话说清要达成什么。
 
 ## 模式
-- 绿地 / 棕地：<棕地需先 lode-recon 出 System-Map.md>
+- 绿地 / 棕地：<棕地需先 lode-recon 出 system-map.md>
 - 单人 / 团队：<团队走 PR/CI 门禁>
 
 ## 完成标准（可验收，逐条）

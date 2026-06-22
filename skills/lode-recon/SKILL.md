@@ -5,7 +5,7 @@ description: "Lodestar 主线⓪（棕地）。动老代码前先侦察：摸清
 
 # Recon（代码侦察）
 
-棕地入口环（绿地项目跳过）。在 spec/plan **之前**先把现有系统摸清，产出一份 `System-Map.md`，让后续的 spec 知道"现状是什么"、plan 知道"动哪会爆"。
+棕地入口环（绿地项目跳过）。在 spec/plan **之前**先把现有系统摸清，产出一份 `system-map.md`，让后续的 spec 知道"现状是什么"、plan 知道"动哪会爆"。
 
 > 第一性原理：不懂现有系统就规划，等于蒙着眼睛改别人的代码。先看清，再动手。
 
@@ -27,7 +27,7 @@ description: "Lodestar 主线⓪（棕地）。动老代码前先侦察：摸清
 
 ## Done（什么算合格）
 
-产出 `.lode/<project>/System-Map.md`（起步模板见 `docs/templates/System-Map.md`），且满足：
+产出 `.lode/<project>/system-map.md`（起步模板见 `docs/templates/system-map.md`），且满足：
 - 架构地图：模块/分层 + 关键入口 + 数据流，能让人据此定位代码。
 - 约定清单：命名/目录/错误处理/配置/风格——后续改动据此"长得像现有代码"。
 - **可跑命令**：构建、测试、运行、lint 的真实命令（直接喂给 `verify.sh`）。

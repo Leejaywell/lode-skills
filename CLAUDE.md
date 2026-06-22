@@ -23,8 +23,8 @@
 
 精简主线为**单人 · 绿地 · 0→1** 调校；通过**两个模式开关**把能力扩到老项目与团队——开关由 `lode-drive` 在开局检测设定：
 
-- **绿地 ↔ 棕地**：有现成代码 → 棕地。先 `lode-recon` 出 `System-Map.md`，spec 走 delta（现状→目标 + 绝不能破坏），plan 做影响分析/迁移/基线，`verify.sh` 跑**全量回归**。绿地走精简流程。
-- **单人 ↔ 团队**：单人用本地 `REVIEW_PASSED` 门禁；团队/长生命周期切 **PR/CI 门禁**——完成 = PR 过 CI + 必需 approval 合并，子代理审查降级为 PR 前过滤（不替代人审）。
+- **绿地 ↔ 棕地**：有现成代码 → 棕地。先 `lode-recon` 出 `system-map.md`，spec 走 delta（现状→目标 + 绝不能破坏），plan 做影响分析/迁移/基线，`verify.sh` 跑**全量回归**。绿地走精简流程。
+- **单人 ↔ 团队**：单人用本地 `review-passed` 门禁；团队/长生命周期切 **PR/CI 门禁**——完成 = PR 过 CI + 必需 approval 合并，子代理审查降级为 PR 前过滤（不替代人审）。
 - **安全/合规攸关**：在上面之上再加强制安全审 + 需求-代码-测试可追溯（见 `lode-review`）。
 
 > 原则不变：能力靠**模式叠护栏**扩，不是把一套笨重流程压所有人。绿地仍轻，老项目/团队才上重护栏。**自主 ≠ 无人**：agent 全程自驱，人只在「审 PR」和「接熔断」两处出现。
@@ -33,17 +33,17 @@
 
 | 步 | 环节 | Skill | 产出文档 | 何时 |
 |---|---|---|---|---|
-| 0 | 代码侦察（棕地） | `lode-recon` | `System-Map.md` | 老项目必做 |
-| 1 | 需求收集 | `lode-spec` | `Product-Spec.md` | 必做 |
-| 2 | 设计规范 | `lode-brief` | `Design-Brief.md` | 可选 |
+| 0 | 代码侦察（棕地） | `lode-recon` | `system-map.md` | 老项目必做 |
+| 1 | 需求收集 | `lode-spec` | `product-spec.md` | 必做 |
+| 2 | 设计规范 | `lode-brief` | `design-brief.md` | 可选 |
 | 3 | 设计图制作 | `lode-design` | 设计稿/原型 | 可选 |
-| 4 | 开发计划 | `lode-plan` | `DEV-PLAN.md` | 必做 |
-| 5 | 项目开发 | `lode-build` | 代码 + `CHANGELOG.md` | 必做 |
+| 4 | 开发计划 | `lode-plan` | `dev-plan.md` | 必做 |
+| 5 | 项目开发 | `lode-build` | 代码 + `changelog.md` | 必做 |
 | 6 | Bug 修复 | `lode-fix` | — | 按需 |
 | 7 | 代码审查 | `lode-review` | 审查报告 | 按需（收工门禁） |
 | 8 | 构建发布 | `lode-release` | Release | 按需 |
 
-把一个目标交给 agent **自主跑完**，用 `lode-drive`（驱动器 + 进度账本 `LEDGER.jsonl`，崩了能续、跑完能审计）；写单个 Face 的执行指令用 `lode-go`；要造新能力用 `lode-skill`；规则进化用 `lode-evolve`。
+把一个目标交给 agent **自主跑完**，用 `lode-drive`（驱动器 + 进度账本 `ledger.jsonl`，崩了能续、跑完能审计）；写单个 Face 的执行指令用 `lode-go`；要造新能力用 `lode-skill`；规则进化用 `lode-evolve`。
 
 ## 编排纪律：默认一个主 Agent
 
@@ -62,20 +62,20 @@
 
 ## 文档驱动 + Session 卫生
 
-运行期产物统一落 `.lode/<project>/`：`Product-Spec.md → Design-Brief.md → DEV-PLAN.md → 代码 → CHANGELOG.md`。
+运行期产物统一落 `.lode/<project>/`：`product-spec.md → design-brief.md → dev-plan.md → 代码 → changelog.md`。
 - AI 跨环节不丢上下文，**靠的就是这些文档**（比 memory 更全）。进新环节先读上一环的文档。
 - **一个 Session 只开发一个功能**；下个功能开新 Session，让每个 Session 的上下文小而干净，模型注意力始终最佳。
 
 ## 门禁（确定性的判断 → 做成程序，不靠自觉）
 
 由 `hooks/` 强制（合并进 `.claude/settings.json`）：
-- **Stop hook `lode-gate.sh`**：开发已开始（有 CHANGELOG）的工作区收工前，①实跑 `.lode/<project>/verify.sh`（编译+测试，退出码说话）②校验非空且不旧于 CHANGELOG 的 `REVIEW_PASSED` 标记，两层任一不过即卡死。门禁**不只信模型写的 flag**——编译/测试由程序实跑。
+- **Stop hook `lode-gate.sh`**：开发已开始（有 CHANGELOG）的工作区收工前，①实跑 `.lode/<project>/verify.sh`（编译+测试，退出码说话）②校验非空且不旧于 CHANGELOG 的 `review-passed` 标记，两层任一不过即卡死。门禁**不只信模型写的 flag**——编译/测试由程序实跑。
 - **UserPromptSubmit hook `lode-signal.sh`**：命中纠正/不满关键词就把信号追加进 `signals.jsonl`，喂给自进化。
 
 开发每个 Face 必走**四步审计**，按「确定性→判断」排序：`编译验证 → 测试完整性 → Code Review → 功能测试`。前两步确定性的交给 `verify.sh` 门禁实跑，后两步不确定的交给独立子 Agent / 人。全过才算 Done。**测试完整性是 spec-bound**：测的是该 Face 在 plan 里**先于开发定**的「验收场景」（派生自验收标准），不是 builder 写完代码再凑的弱测试——这样测试绑需求、不绑实现，堵住"测试绿但功能跑偏"。
 
 **「完成」的定义随模式变**：
-- 绿地·单人：`verify.sh` 绿 + `REVIEW_PASSED`。
+- 绿地·单人：`verify.sh` 绿 + `review-passed`。
 - 棕地·单人：上面 + **全量回归无新红**（对比改动前基线）+ spec「绝不能破坏」清单逐条确认。
 - 团队 / 长生命周期：上面 + **PR 过 CI + 必需 approval 合并**。
 - 安全/合规：再加**安全审通过 + 需求-代码-测试可追溯**。
@@ -86,7 +86,7 @@
 你纠正它/骂它  →  写进 .lode/<project>/signals.jsonl(信号队列)
    →  下次新开 Session,轻量自检(文档/代码/信号队列)时,派 lode-evolve 子代理消化
    →  抽象成规则建议写进 proposals.md,逐条判定:替换 / 补充 / 新增
-   →  你确认(增/改/删)  →  落进对应 Skill 的 question-bank.md 或本规则库
+   →  你确认(增/改/删)  →  落进对应 Skill 的 question-bank-*.md 或本规则库
 ```
 原则：**规则分两类，别混**。
 - **普世不变量**（别硬编码密钥、验证输入、参数化查询、编译/测试过…）——**前置**：能做成 hook/lint 的就做成确定性门禁，**不等踩坑**。
@@ -107,16 +107,16 @@
 ```
 project/
 ├── .lode/<project>/                 # 运行期产物（按功能）
-│   ├── Product-Spec.md / Product-Spec-CHANGELOG.md   # 需求文档 + 变更记录
-│   ├── Design-Brief.md              # 设计规范（可选）
-│   ├── DEV-PLAN.md                  # 分阶段开发计划
-│   ├── CHANGELOG.md                 # 每个 Face 的变更记录
+│   ├── product-spec.md / product-spec-changelog.md   # 需求文档 + 变更记录
+│   ├── design-brief.md              # 设计规范（可选）
+│   ├── dev-plan.md                  # 分阶段开发计划
+│   ├── changelog.md                 # 每个 Face 的变更记录
 │   ├── verify.sh                    # 确定性编译+测试（门禁实跑）
 │   ├── signals.jsonl / proposals.md # 自进化：信号队列 + 建议
-│   └── REVIEW_PASSED                # 审查通过标记
+│   └── review-passed                # 审查通过标记
 ├── <project-name>/                  # 项目代码（以项目名命名）
 ├── CLAUDE.md                        # 主控顶层规则（本文件）
-├── CONVENTIONS.md                   # 通用写作与编程规范（或复用 ECC rules）
+├── conventions.md                   # 通用写作与编程规范（或复用 ECC rules）
 └── .claude/
     ├── skills/lode-*/               # 各阶段能力模块（SKILL.md + references/）
     ├── agents/                      # lode-review、lode-evolve 子代理

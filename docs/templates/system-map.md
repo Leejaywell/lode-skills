@@ -1,6 +1,6 @@
-# System-Map — <项目名>
+# system-map — <项目名>
 
-> 由 lode-recon 产出（棕地项目）。落地路径：`.lode/<project>/System-Map.md`
+> 由 lode-recon 产出（棕地项目）。落地路径：`.lode/<project>/system-map.md`
 > 作用：让 spec 知道现状、plan 能做影响分析、build 改动"长得像现有代码"。
 
 ## 架构地图

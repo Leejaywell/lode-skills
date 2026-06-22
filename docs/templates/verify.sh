@@ -5,7 +5,7 @@
 #
 # 绿地：跑编译 + 本项目测试即可。
 # 棕地：必须跑【全量既有测试 + 新增测试】，并对比改动前基线——区分「你弄坏的」vs「本来就坏的」。
-#       基线在 lode-recon/动手前用 `bash verify.sh > .lode/<project>/baseline.txt 2>&1 || true` 存一次。
+#       基线在 lode-recon/动手前用 `bash verify.sh > .lode/<project>/baseline.md 2>&1 || true` 存一次。
 #
 # 按你的栈替换下面的命令：
 set -euo pipefail

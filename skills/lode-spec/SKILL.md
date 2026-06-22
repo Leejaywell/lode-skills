@@ -1,11 +1,11 @@
 ---
 name: lode-spec
-description: "Lodestar 主线①需求收集。把模糊想法逼问成可开发的 Product-Spec。当用户要开始新产品/新功能、只给一句话需求或模糊想法、需要需求收集时使用。默认毒舌、禁止阿谀奉承、选择题式逼问。Trigger: /lode-spec"
+description: "Lodestar 主线①需求收集。把模糊想法逼问成可开发的 product-spec。当用户要开始新产品/新功能、只给一句话需求或模糊想法、需要需求收集时使用。默认毒舌、禁止阿谀奉承、选择题式逼问。Trigger: /lode-spec"
 ---
 
 # Product Spec Builder（需求收集）
 
-主线第 ① 环，也是「毒舌」最集中的地方。通过结构化访谈把模糊想法**逼问**成一份能直接开发的 `Product-Spec.md`。
+主线第 ① 环，也是「毒舌」最集中的地方。通过结构化访谈把模糊想法**逼问**成一份能直接开发的 `product-spec.md`。
 
 ## Usage（什么时候用）
 
@@ -14,7 +14,7 @@ description: "Lodestar 主线①需求收集。把模糊想法逼问成可开发
 
 ## 怎么问（薄在步骤，厚在标准）
 
-不写"第一步问什么第二步问什么"的脚本。真正写厚的是一份**问题库**（落地到 `.lode/<project>/question-bank.md`，起步模板见本 skill 的 `references/question-bank-spec.md`）：每个问题配「什么答案能接受、什么答案必须打回去」。模型按用户回答动态决定下一个问题，问题库只在跑偏时把它拽回来。把"怎么做"删掉，把"什么算好"写厚。
+不写"第一步问什么第二步问什么"的脚本。真正写厚的是一份**问题库**（落地到 `.lode/<project>/question-bank-spec.md`，起步模板见本 skill 的 `references/question-bank-spec.md`）：每个问题配「什么答案能接受、什么答案必须打回去」。模型按用户回答动态决定下一个问题，问题库只在跑偏时把它拽回来。把"怎么做"删掉，把"什么算好"写厚。
 
 四个手法（逼问高效的关键）：
 
@@ -38,15 +38,15 @@ description: "Lodestar 主线①需求收集。把模糊想法逼问成可开发
 
 ## 棕地：用 delta 模式（改老项目时）
 
-目标落在已有项目时，spec 不是"做什么"，而是**改什么**。先读 `lode-recon` 的 `System-Map.md`，然后按 delta 写：
+目标落在已有项目时，spec 不是"做什么"，而是**改什么**。先读 `lode-recon` 的 `system-map.md`，然后按 delta 写：
 - **现状**：现在的行为是什么（针对要改的那块）。
 - **目标**：改完应该是什么。
 - **绝不能破坏（不变量 / 回归面）**：哪些现有行为、数据、接口必须保持不变——这一栏直接决定 build 阶段要钉住的 characterization 测试和门禁要跑的回归范围。
-- **受影响模块**：从 System-Map 标出会被牵动的地方（供 plan 做影响分析）。
+- **受影响模块**：从 system-map 标出会被牵动的地方（供 plan 做影响分析）。
 
 ## Done（什么算合格）
 
-产出 `.lode/<project>/Product-Spec.md`，且满足：
+产出 `.lode/<project>/product-spec.md`，且满足：
 - 价值主张 + 目标用户 + 核心场景说清楚。
 - 功能需求分层（这一版做什么 / 先不做什么），每条可验收。
 - 明确写出**范围边界**（不做什么），防止无限膨胀。

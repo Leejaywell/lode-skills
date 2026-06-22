@@ -1,6 +1,6 @@
 # 设计问题库（Design）— 起步模板
 
-> 由 lode-brief 使用。落地路径：`.lode/<project>/question-bank.md`（或与 spec 合并分节）。
+> 由 lode-brief 使用。落地路径：`.lode/<project>/question-bank-design.md`。
 > 把"感觉"逼成决策：选择题优先，必问反参考，被否就换一批。
 > 自进化只往这里增/改/删，每条对应一次真实失败。
 

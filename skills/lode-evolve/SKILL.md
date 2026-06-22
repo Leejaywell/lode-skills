@@ -13,7 +13,7 @@ description: "Lodestar 扩展技能·自进化引擎。把真实失败/用户纠
 你纠正它 / 骂过它  →  记成一条 Signal,写进 .lode/<project>/signals.jsonl(信号队列)
    →  下次新开 Session,轻量自检(看文档/代码/信号队列)时,派一个 Evolution Runner 子代理去消化
    →  消化 = 分析信号,抽象成规则建议,写进 proposals.md,并逐条判定:替换现有 / 补充 / 单纯新增
-   →  逐条摆出来问你(增/改/删)  →  你确认后落进对应 Skill 的 question-bank.md 或 CLAUDE.md 规则库
+   →  逐条摆出来问你(增/改/删)  →  你确认后落进对应 Skill 的 question-bank-*.md 或 CLAUDE.md 规则库
    →  信号清空,系统回到全新状态
 ```
 
@@ -27,7 +27,7 @@ description: "Lodestar 扩展技能·自进化引擎。把真实失败/用户纠
 
 - 把 Signal 抽象成**具体、可执行**的规则建议，标注来源 Signal，并判定替换/补充/新增。
 - 逐条拿给用户**确认**，不擅自写库。
-- 确认后写入对应 `question-bank.md`（需求/设计类规则）或 `CLAUDE.md` 的 `<!-- RULES -->` 区。
+- 确认后写入对应 `question-bank-*.md`（需求/设计类规则）或 `CLAUDE.md` 的 `<!-- RULES -->` 区。
 - 顺手反向清理：发现从不触发的规则，主动建议删除。
 
 ## Guardrails（红线）

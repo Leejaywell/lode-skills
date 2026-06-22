@@ -5,10 +5,10 @@
 # 这道门禁有两层，缺一不可：
 #   ① 确定性验证（硬）：跑 .lode/<project>/verify.sh（项目级编译+测试脚本），用退出码说话。
 #      —— "编译零报错 / 测试全过" 是最确定性的判断，必须由门禁实跑，而不是塞进模型自评的四步审计。
-#   ② 审查通过标记（软）：REVIEW_PASSED 存在、且新于最近一次开发(CHANGELOG)。
+#   ② 审查通过标记（软）：review-passed 存在、且新于最近一次开发(CHANGELOG)。
 #      —— 防止「改了没重审就收工」。标记须带可核验内容（被审 Face/commit 标识），不是空 touch。
 #
-# 规则：只有「开发已经开始」（存在 CHANGELOG.md）的 Lodestar 工作区才拦。
+# 规则：只有「开发已经开始」（存在 changelog.md）的 Lodestar 工作区才拦。
 #       spec/design/plan 阶段（还没代码）放行。
 #
 # 退出码：0 放行；2 阻止收工并把 stderr 反馈给模型继续干活。
@@ -21,8 +21,8 @@ LODE_DIR=$(ls -dt .lode/*/ 2>/dev/null | head -1 || true)
 # 没有 lode 工作区 => 不是 Lodestar 流程，放行
 [ -z "${LODE_DIR}" ] && exit 0
 
-CHANGELOG="${LODE_DIR}CHANGELOG.md"
-PASS_MARK="${LODE_DIR}REVIEW_PASSED"
+CHANGELOG="${LODE_DIR}changelog.md"
+PASS_MARK="${LODE_DIR}review-passed"
 VERIFY="${LODE_DIR}verify.sh"
 
 # 开发还没开始（无 CHANGELOG）=> 早期阶段，不拦
@@ -51,7 +51,7 @@ if [ ! -f "${PASS_MARK}" ]; then
   exit 2
 fi
 
-# ② 标记不能是空文件（防止 `touch REVIEW_PASSED` 自证空过）
+# ② 标记不能是空文件（防止 `touch review-passed` 自证空过）
 if [ ! -s "${PASS_MARK}" ]; then
   echo "[Lodestar 门禁] 阻止收工：${PASS_MARK} 为空。" >&2
   echo "标记必须写明本轮被审查的 Face/commit 标识（可核验），不接受空 touch。" >&2

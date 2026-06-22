@@ -1,7 +1,7 @@
-# Product-Spec — <项目/功能名>
+# product-spec — <项目/功能名>
 
-> 由 lode-spec 产出。落地路径：`.lode/<project>/Product-Spec.md`
-> 配套 `question-bank.md`：每个访谈问题 +「什么答案能接受 / 什么必须打回去」，自进化只往这里增改。
+> 由 lode-spec 产出。落地路径：`.lode/<project>/product-spec.md`
+> 配套 `question-bank-spec.md`：每个访谈问题 +「什么答案能接受 / 什么必须打回去」，自进化只往这里增改。
 
 ## 价值主张
 一句话说清：为谁、解决什么、凭什么。
@@ -26,7 +26,7 @@
 - 现状（要改那块现在的行为）：
 - 目标（改完应是什么）：
 - **绝不能破坏（不变量 / 回归面）**：
-- 受影响模块（来自 System-Map）：
+- 受影响模块（来自 system-map）：
 
 ## 非功能约束
 - 平台 / 性能 / 隐私 / 离线-在线：
