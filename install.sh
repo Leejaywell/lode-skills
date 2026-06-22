@@ -36,6 +36,11 @@ echo "→ Installing gate scripts →  $DEST/lode-hooks/"
 cp -R "$SRC/hooks/." "$DEST/lode-hooks/"
 chmod +x "$DEST/lode-hooks/"*.sh 2>/dev/null || true
 
+echo "→ Installing source assets →  $DEST/lodestar/   (CLAUDE.md + templates, so spec/build can auto-provision per-project files)"
+mkdir -p "$DEST/lodestar"
+cp "$SRC/CLAUDE.md" "$DEST/lodestar/CLAUDE.md"
+cp -R "$SRC/docs/templates" "$DEST/lodestar/templates"
+
 echo
 echo "✅ Installed user-wide:"
 echo "   skills:  lode-spec lode-brief lode-design lode-plan lode-build lode-release lode-drive lode-go lode-review lode-fix lode-skill lode-evolve lode-init"
