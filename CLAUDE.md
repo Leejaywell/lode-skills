@@ -35,7 +35,7 @@
 
 | 步 | 环节 | Skill | 产出文档 | 何时 |
 |---|---|---|---|---|
-| 1 | 需求收集 | `lode-spec` | `product-spec.md` | 必做 |
+| 1 | 需求收集 | `lode-spec` | `docs/spec.md` | 必做 |
 | 2 | 设计规范 | `lode-brief` | `design-brief.md` | 可选 |
 | 3 | 设计图制作 | `lode-design` | 设计稿/原型 | 可选 |
 | 4 | 开发计划 | `lode-plan` | `dev-plan.md` | 必做 |
@@ -63,14 +63,14 @@
 
 ## 文档驱动 + Session 卫生
 
-运行期产物统一落 `.lode/<project>/`：`product-spec.md → design-brief.md → dev-plan.md → 代码 → changelog.md`。
+需求落 `docs/`（进 git），其余工作稿落 `.lode/`（gitignore）：`docs/spec.md → .lode/{design-brief,dev-plan} → 代码 → .lode/changelog.md`。
 - AI 跨环节不丢上下文，**靠的就是这些文档**（比 memory 更全）。进新环节先读上一环的文档。
 - **一个 Session 只开发一个功能**；下个功能开新 Session，让每个 Session 的上下文小而干净，模型注意力始终最佳。
 
 ## 门禁（确定性的判断 → 做成程序，不靠自觉）
 
 由 `hooks/` 强制（合并进 `.claude/settings.json`）：
-- **Stop hook `lode-gate.sh`**：遍历每个开发已开始（有 CHANGELOG）的工作区，收工前 ①实跑 `.lode/<project>/verify.sh`（编译+测试，退出码说话；代码指纹未变则用缓存跳过重跑）②校验 `review-passed` 非空、且含**当前代码指纹**（git 项目用内容级 diff，防「审完又改」「空 touch」「伪造」），任一不过即卡死。连续卡 ≥5 次触发**熔断**：放行交人，防「昂贵的不完成」。门禁**不只信模型写的 flag**——编译/测试由程序实跑。（老实说：程序铁判的只有①编译②测试+指纹防篡改；③代码审查④功能测试仍是**干净脑子的判断**，门禁只保证「标记没造假、代码没在审后改过」，证明不了「真审过」。）
+- **Stop hook `lode-gate.sh`**：遍历每个开发已开始（有 CHANGELOG）的工作区，收工前 ①实跑 `.lode/verify.sh`（编译+测试，退出码说话；代码指纹未变则用缓存跳过重跑）②校验 `review-passed` 非空、且含**当前代码指纹**（git 项目用内容级 diff，防「审完又改」「空 touch」「伪造」），任一不过即卡死。连续卡 ≥5 次触发**熔断**：放行交人，防「昂贵的不完成」。门禁**不只信模型写的 flag**——编译/测试由程序实跑。（老实说：程序铁判的只有①编译②测试+指纹防篡改；③代码审查④功能测试仍是**干净脑子的判断**，门禁只保证「标记没造假、代码没在审后改过」，证明不了「真审过」。）
 - **UserPromptSubmit hook `lode-signal.sh`**：命中纠正/不满关键词就把信号追加进 `signals.jsonl`，喂给自进化。
 - **SessionStart hook `lode-session.sh`**：开局检查 signals 队列，非空就提示去跑 `lode-evolve`——把自进化的**触发**也做成程序，不靠模型记着。
 
@@ -85,7 +85,7 @@
 ## 自进化机制（Evolution）
 
 ```
-你纠正它/骂它  →  写进 .lode/<project>/signals.jsonl(信号队列)
+你纠正它/骂它  →  写进 .lode/signals.jsonl(信号队列)
    →  下次新开 Session,轻量自检(文档/代码/信号队列)时,派 lode-evolve 子代理消化
    →  抽象成规则建议写进 proposals.md,逐条判定:替换 / 补充 / 新增
    →  你确认(增/改/删)  →  落进对应 Skill 的 question-bank-*.md 或本规则库
@@ -104,28 +104,34 @@
 - **Lodestar 流程内优先用 `lode-*` 系列**：环境里装了大量同义 skill（spec-driven-development、planning-and-task-breakdown、code-review…），主线各环明确走对应 `lode-*`，避免自动触发被同义 skill 抢走。
 - Session 启动时 `lode-session.sh`（SessionStart hook）自动检查 `signals`，非空就提示；主 Agent 据此 spawn `lode-evolve` 消化成 `proposals.md`。
 - **文档是单一真相源**：任何变更先改对应上游文档再动代码；上游文档变了，主 Agent 主动改下游并保持迭代同步。
+- **需求漂移随手回写 spec**：需求/范围的任何变更——无论在 `/lode-spec` 里、还是 build 中途、临时讨论、或你纠正时冒出来的——都**立刻回写 `docs/spec.md`**（就地更新当前真相）并在 `docs/spec-changelog.md` 追加一行（日期/改了什么/为什么），别只在代码里实现完就算。**spec 必须始终等于"现在真正要做的"，不许落后于代码。**
+- **spec 只演进不堆叠**：`docs/spec.md` 永远就地更新保持当前真相，被取代的条目移入文末归档而非累加；完整历史交给 git 与薄 `spec-changelog.md`，别让每天要读的 spec 被增量撑大。
 
 ## [文件结构]
 
 ```
 project/
-├── .lode/<project>/                 # 运行期产物（按功能）
-│   ├── system-map.md                # 现状活地图（任何项目都有：spec 建、build 持续更新）
-│   ├── product-spec.md / product-spec-changelog.md   # 需求文档 + 变更记录
-│   ├── design-brief.md              # 设计规范（可选）
-│   ├── dev-plan.md                  # 分阶段开发计划
-│   ├── changelog.md                 # 每个切片的变更记录
-│   ├── verify.sh                    # 确定性编译+测试（门禁实跑）
+├── docs/                            # 进 git 的交付文档（被跟踪）
+│   ├── spec.md                      # 需求：唯一持久真相源（就地演进、归档旧条目、不膨胀）
+│   └── spec-changelog.md            # 需求变更记录（一次一行，含日期）
+├── .lode/                           # 运行态 / 工作稿（整个 gitignore，不进库）
+│   ├── system-map.md                # 现状活地图（spec 建、build 持续更新；可重建）
+│   ├── design-brief.md / mockups/   # 设计产物（可选；新设计就地取代旧的）
+│   ├── dev-plan.md                  # 开发计划（周期稿，release 后清理）
+│   ├── changelog.md                 # 每切片变更（含时间戳；周期稿，release 后清理）
+│   ├── verify.sh                    # 确定性编译+测试（门禁实跑；可重建）
+│   ├── goal.md / ledger.jsonl       # 自动驾驶：目标 + 进度账本
 │   ├── signals.jsonl / proposals.md # 自进化：信号队列 + 建议
-│   └── review-passed                # 审查通过标记
-├── <project-name>/                  # 项目代码（以项目名命名）
+│   └── review-passed / .verify-green / .gate-attempts  # 门禁记账（每次重生）
+├── <代码目录>/                       # 项目代码
 ├── CLAUDE.md                        # 主控顶层规则（本文件）
-├── conventions.md                   # 通用写作与编程规范（或复用 ECC rules）
 └── .claude/
     ├── skills/lode-*/               # 各阶段能力模块（SKILL.md + references/）
     ├── agents/                      # lode-review、lode-evolve、lode-recon 子代理
     └── settings.json                # model / MCP / hooks（确定性门禁）
 ```
+
+> **两分原则**：`docs/spec.md` + `docs/spec-changelog.md` 是**持久、进 git** 的真相源；`.lode/` 全是工作态——要么周期内用完即清（dev-plan/changelog/design），要么可重建（system-map/verify），要么纯记账（ledger/signals/review-passed/缓存）。项目 `.gitignore` 应忽略 `.lode/`、跟踪 `docs/spec*.md`。
 
 <!-- RULES:BEGIN — 每条格式：- [来源Signal] 规则。 -->
 <!-- RULES:END -->

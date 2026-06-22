@@ -1,6 +1,6 @@
 # GOAL — <目标名>
 
-> 由 lode-auto 产出。落地路径：`.lode/<project>/goal.md`
+> 由 lode-auto 产出。落地路径：`.lode/goal.md`
 > 这是自动驾驶的总目标（区别于 order.md：执行令是单个切片/一段的执行指令，goal.md 是整条循环的终点）。
 
 ## 目标

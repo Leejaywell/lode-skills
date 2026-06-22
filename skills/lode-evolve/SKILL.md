@@ -10,7 +10,7 @@ description: "Lodestar 扩展技能·自进化引擎。把真实失败/用户纠
 ## 机制（闭环）
 
 ```
-你纠正它 / 骂过它  →  记成一条 Signal,写进 .lode/<project>/signals.jsonl(信号队列)
+你纠正它 / 骂过它  →  记成一条 Signal,写进 .lode/signals.jsonl(信号队列)
    →  下次新开 Session,轻量自检(看文档/代码/信号队列)时,派一个 Evolution Runner 子代理去消化
    →  消化 = 分析信号,抽象成规则建议,写进 proposals.md,并逐条判定:替换现有 / 补充 / 单纯新增
    →  逐条摆出来问你(增/改/删)  →  你确认后落进对应 Skill 的 question-bank-*.md 或 CLAUDE.md 规则库

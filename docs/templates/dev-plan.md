@@ -1,6 +1,6 @@
 # DEV PLAN — <项目名>
 
-> 由 lode-plan 产出。落地路径：`.lode/<project>/dev-plan.md`
+> 由 lode-plan 产出。落地路径：`.lode/dev-plan.md`
 > 切片 = 一块纵向、可独立验收的开发单元：做完能编译、能跑、能独立验收。
 
 ## 模式
@@ -11,7 +11,7 @@
 - 栈：
 - 关键决策 + 理由：
 
-## 确定性验证（落成 `.lode/<project>/verify.sh`）
+## 确定性验证（落成 `.lode/verify.sh`）
 > 把本项目的「编译 + 测试」封装成一条脚本，全过 `exit 0`。Stop 门禁实跑它，把编译/测试从模型自评移交给程序。
 - 编译命令：<如 `npm run build`>
 - 测试命令：<如 `npm test`>

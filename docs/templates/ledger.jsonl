@@ -1,4 +1,4 @@
-{"//": "由 lode-auto 维护。落地：.lode/<project>/ledger.jsonl。追加式,一行一事件,记录每个切片的进度,让目标崩了能续、跑完能审计。状态只在真过审计/回归/PR 后才写 passed。"}
+{"//": "由 lode-auto 维护。落地：.lode/ledger.jsonl。追加式,一行一事件,记录每个切片的进度,让目标崩了能续、跑完能审计。状态只在真过审计/回归/PR 后才写 passed。"}
 {"ts": "<ISO8601>", "slice": "切片 1", "status": "doing", "note": "最薄可跑骨架"}
 {"ts": "<ISO8601>", "slice": "切片 1", "status": "passed", "commit": "<hash>", "pr": null, "verify": "build+test green, full regression no new red"}
 {"ts": "<ISO8601>", "slice": "切片 2", "status": "blocked", "note": "依赖切片 3 的接口未定;或连续失败 3 次触发熔断,已停下找人"}

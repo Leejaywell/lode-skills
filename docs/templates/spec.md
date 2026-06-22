@@ -1,6 +1,6 @@
-# product-spec — <项目/功能名>
+# spec — <项目/功能名>
 
-> 由 lode-spec 产出。落地路径：`.lode/<project>/product-spec.md`
+> 由 lode-spec 产出。落地路径：`docs/spec.md`
 > 配套 `question-bank-spec.md`：每个访谈问题 +「什么答案能接受 / 什么必须打回去」，自进化只往这里增改。
 
 ## 价值主张
