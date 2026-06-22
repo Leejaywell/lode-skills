@@ -28,6 +28,8 @@
 - **安全/合规攸关**：在上面之上再加强制安全审 + 需求-代码-测试可追溯（见 `lode-review`）。
 
 > 原则不变：能力靠**模式叠护栏**扩，不是把一套笨重流程压所有人。从零新建仍轻，要改现有代码、或多人团队才上重护栏。**自主 ≠ 无人**：agent 全程自驱，人只在「审 PR」和「接熔断」两处出现。
+>
+> **隆重程度也按任务大小缩放**：改十行 / 配置这种小活，允许 spec 一句话、plan 一个切片、跳过 brief/design——门禁本来就只在开发开始才咬。大活 / 老项目 / 团队才上全套，别拿一长串流程压一个小改动。
 
 ## [任务] 主线流程 + 何时调哪个 Skill
 
@@ -68,8 +70,9 @@
 ## 门禁（确定性的判断 → 做成程序，不靠自觉）
 
 由 `hooks/` 强制（合并进 `.claude/settings.json`）：
-- **Stop hook `lode-gate.sh`**：遍历每个开发已开始（有 CHANGELOG）的工作区，收工前 ①实跑 `.lode/<project>/verify.sh`（编译+测试，退出码说话；代码指纹未变则用缓存跳过重跑）②校验 `review-passed` 非空、且含**当前代码指纹**（git 项目用内容级 diff，防「审完又改」「空 touch」「伪造」），任一不过即卡死。连续卡 ≥5 次触发**熔断**：放行交人，防「昂贵的不完成」。门禁**不只信模型写的 flag**——编译/测试由程序实跑。
+- **Stop hook `lode-gate.sh`**：遍历每个开发已开始（有 CHANGELOG）的工作区，收工前 ①实跑 `.lode/<project>/verify.sh`（编译+测试，退出码说话；代码指纹未变则用缓存跳过重跑）②校验 `review-passed` 非空、且含**当前代码指纹**（git 项目用内容级 diff，防「审完又改」「空 touch」「伪造」），任一不过即卡死。连续卡 ≥5 次触发**熔断**：放行交人，防「昂贵的不完成」。门禁**不只信模型写的 flag**——编译/测试由程序实跑。（老实说：程序铁判的只有①编译②测试+指纹防篡改；③代码审查④功能测试仍是**干净脑子的判断**，门禁只保证「标记没造假、代码没在审后改过」，证明不了「真审过」。）
 - **UserPromptSubmit hook `lode-signal.sh`**：命中纠正/不满关键词就把信号追加进 `signals.jsonl`，喂给自进化。
+- **SessionStart hook `lode-session.sh`**：开局检查 signals 队列，非空就提示去跑 `lode-evolve`——把自进化的**触发**也做成程序，不靠模型记着。
 
 开发每个切片必走**四步审计**，按「确定性→判断」排序：`编译验证 → 测试完整性 → Code Review → 功能测试`。前两步确定性的交给 `verify.sh` 门禁实跑，后两步不确定的交给独立子 Agent / 人。全过才算 Done。**测试完整性是 spec-bound**：测的是该切片在 plan 里**先于开发定**的「验收场景」（派生自验收标准），不是 builder 写完代码再凑的弱测试——这样测试绑需求、不绑实现，堵住"测试绿但功能跑偏"。
 
@@ -98,7 +101,7 @@
 - **联网优先**：涉及外部 API、框架版本，先搜索确认再动手。
 - **自进化**：用户纠正即抓成信号写入 `signals.jsonl`；`hooks/lode-signal.sh`（UserPromptSubmit）靠关键词只抓明显的，主 Agent 把 hook 没识别到的修正自己补记一条。
 - **Lodestar 流程内优先用 `lode-*` 系列**：环境里装了大量同义 skill（spec-driven-development、planning-and-task-breakdown、code-review…），主线各环明确走对应 `lode-*`，避免自动触发被同义 skill 抢走。
-- Session 启动时主 Agent 自检：`signals` 非空就 spawn `lode-evolve` 消化成 `proposals.md`。
+- Session 启动时 `lode-session.sh`（SessionStart hook）自动检查 `signals`，非空就提示；主 Agent 据此 spawn `lode-evolve` 消化成 `proposals.md`。
 - **文档是单一真相源**：任何变更先改对应上游文档再动代码；上游文档变了，主 Agent 主动改下游并保持迭代同步。
 
 ## [文件结构]

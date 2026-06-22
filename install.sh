@@ -52,7 +52,8 @@ if [ "${LODE_NO_HOOKS:-0}" != "1" ] && command -v python3 >/dev/null 2>&1; then
   if python3 - "$DEST/settings.json" "$DEST" <<'PY'
 import json, os, shutil, sys
 path, dest = sys.argv[1], sys.argv[2]
-cmds = {"Stop": 'bash "%s/lode-hooks/lode-gate.sh"' % dest,
+cmds = {"SessionStart": 'bash "%s/lode-hooks/lode-session.sh"' % dest,
+        "Stop": 'bash "%s/lode-hooks/lode-gate.sh"' % dest,
         "UserPromptSubmit": 'bash "%s/lode-hooks/lode-signal.sh"' % dest}
 try:
     with open(path) as f: s = json.load(f)

@@ -1,6 +1,16 @@
 {
   "//": "Lodestar 插件门禁。插件启用即生效,无需手动合并进 .claude/settings.json。脚本路径用 ${CLAUDE_PLUGIN_ROOT} 指向插件内的 hooks/。门禁脚本在没有 .lode/ 工作区时 exit 0 放行,故在非 Lodestar 项目里启用也无副作用。",
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/lode-session.sh\""
+          }
+        ]
+      }
+    ],
     "UserPromptSubmit": [
       {
         "hooks": [
