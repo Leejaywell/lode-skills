@@ -26,8 +26,8 @@ solo 模式下"完成"= 本地构建 + `review-passed`。**团队 / 长生命周
 
 - **隐私审计通过**：无硬编码密钥/令牌，无意外收集/上传用户数据，权限申请最小且有据。
 - 生产构建成功，按目标平台打出可运行产物。
-- 写出发布说明（版本号、变更摘要、已知限制），来源于 `.lode/changelog.md`（已含时间戳）。
-- **收尾清理周期稿**：成功发布后，把本轮要点在 `docs/spec-changelog.md` 记一行，然后删除 `.lode/dev-plan.md` 与 `.lode/changelog.md`（它们是周期脚手架，持久跟踪靠 `docs/spec-changelog.md` + git；删掉后门禁随之转休眠，下轮开发重建再激活）。
+- 写出发布说明（版本号、变更摘要、已知限制），来源于**自上个 tag 的 `git log`**（per-slice commit 即变更流水；非 git 项目回退读 `.lode/changelog.md`）。
+- **收尾清理周期稿 + 解除门禁武装**：成功发布后，把本轮要点在 `docs/spec-changelog.md` 记一行，然后删除 `.lode/plan/`、`.lode/design/` 两个目录、`.lode/.building` 武装标记，以及 `.lode/changelog.md`（若有）（它们是周期脚手架，含历代版本一并清掉；持久跟踪靠 `docs/spec-changelog.md` + `docs/architecture.md` + git；删掉 `.building` 后门禁随之转休眠，下轮开发首切片重新 touch 再激活）。
 - 给出验收/安装方式，用户能据此跑起来。
 - **主动演示能跑**：打完包/构建后亲自跑一下并截图，或给一条「这样装、这样跑」的命令，让用户当场看到成品在跑——不只交一个包。
 - **团队模式**：所有 PR 已过 CI + 审批合并；发布从主干打。

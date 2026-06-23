@@ -1,10 +1,10 @@
 # DEV PLAN — <项目名>
 
-> 由 lode-plan 产出。落地路径：`.lode/dev-plan.md`
+> 由 lode-plan 产出。落地路径：`.lode/plan/<功能简称>-<YYYY-MM-DD_HH_MM_SS>.md`——**每次 replan 另存新版、绝不覆盖**，下游读最新（`ls -t .lode/plan/*.md | head -1`）。
 > 切片 = 一块纵向、可独立验收的开发单元：做完能编译、能跑、能独立验收。
 
 ## 模式
-- 从零新建 / 改现有代码：<改现有代码需先有 system-map.md>
+- 从零新建 / 改现有代码：<改现有代码需先有 architecture.md>
 - 单人 / 团队：<团队走 PR/CI 门禁>
 
 ## 技术选型 & 关键决策

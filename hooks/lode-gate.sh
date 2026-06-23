@@ -2,7 +2,7 @@
 # Lodestar 收工门禁（Stop hook）。
 # 第一性原理：能让程序判断的，做成门禁卡死，不靠模型自觉，也不只信模型写的 flag。
 #
-# 两层硬检查（只拦「开发已开始」=存在 changelog.md 的工作区；spec/plan 阶段放行）：
+# 两层硬检查（只拦「开发已开始」=存在 .lode/.building 标记的工作区；spec/plan 阶段放行）：
 #   ① 确定性验证：实跑 .lode/verify.sh（编译+全量测试），退出码说话。
 #      —— 指纹未变且上次已绿则跳过重跑（缓存,避免每次 Stop 都全量构建）。
 #   ② 审查通过：review-passed 非空，且其中含【当前代码指纹】——防「审完又改」、防空 touch / 伪造。
@@ -46,8 +46,8 @@ if [ "${1:-}" = "fingerprint" ]; then fingerprint; exit 0; fi
 # 消费 stdin（Stop hook 的 JSON），不阻塞、不依赖
 cat >/dev/null 2>&1 || true
 
-# 开发是否已开始（.lode/changelog.md 存在）；没开始 => 放行（spec/plan 阶段或非 Lodestar 项目）
-[ -f ".lode/changelog.md" ] || exit 0
+# 开发是否已开始（.lode/.building 标记存在,build 首切片 touch）；没开始 => 放行（spec/plan 阶段或非 Lodestar 项目）
+[ -f ".lode/.building" ] || exit 0
 
 MAX_ATTEMPTS="${LODE_GATE_MAX_ATTEMPTS:-5}"
 ATTEMPTS_FILE=".lode/.gate-attempts"

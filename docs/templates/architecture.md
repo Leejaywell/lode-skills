@@ -1,7 +1,7 @@
-# system-map — <项目名>
+# architecture — <项目名>
 
-> 由 lode-spec 开局建立、lode-build 每个切片后更新（任何项目都有的现状活地图）。落地路径：`.lode/system-map.md`
-> 作用：让 spec 知道现状、plan 能做影响分析、build 改动"长得像现有代码"。
+> 由 lode-spec 开局建立、lode-build 每个切片后更新（任何项目都有的现状活地图）。落地路径：`docs/architecture.md`——**进 git 的可追踪交付物**，跨周期常驻、跨机器跨队友不丢，供开发者回顾/审查系统现状（不像 `.lode/` 工作稿那样 release 后清掉）。
+> 作用：让 spec 知道现状、plan 能做影响分析、build 改动"长得像现有代码"、新人/队友一眼看懂系统。
 
 ## 架构地图
 - 技术栈 / 框架 / 版本：

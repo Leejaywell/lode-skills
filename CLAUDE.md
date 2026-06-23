@@ -23,7 +23,7 @@
 
 精简主线为**单人 · 从零新建 · 0→1** 调校（从零新建 = 还没代码、从头做；改现有代码 = 已有一套代码、在上面改）；通过**两个模式开关**把能力扩到「改现有代码」与「多人团队」——开关由 `lode-auto` 在开局检测设定：
 
-- **从零新建 ↔ 改现有代码**：已有一套代码就走「改现有代码」这档——`lode-spec` 开局把 `system-map.md` 备好（自建项目读已有图、外来大库派 `lode-recon` 子代理读），spec 走 delta（现状→目标 + 绝不能破坏），plan 做影响分析/迁移/基线，`verify.sh` 跑**全量回归**。从零新建走精简流程。`system-map.md` 是任何项目都有的活地图：spec 建立、build 每个切片后更新。
+- **从零新建 ↔ 改现有代码**：已有一套代码就走「改现有代码」这档——`lode-spec` 开局把 `architecture.md` 备好（自建项目读已有图、外来大库派 `lode-recon` 子代理读），spec 走 delta（现状→目标 + 绝不能破坏），plan 做影响分析/迁移/基线，`verify.sh` 跑**全量回归**。从零新建走精简流程。`architecture.md` 是任何项目都有的活地图（生命周期见 [文件结构]）。
 - **单人 ↔ 团队**：单人用本地 `review-passed` 门禁；团队/长生命周期切 **PR/CI 门禁**——完成 = PR 过 CI + 必需 approval 合并，子代理审查降级为 PR 前过滤（不替代人审）。
 - **安全/合规攸关**：在上面之上再加强制安全审 + 需求-代码-测试可追溯（见 `lode-review`）。
 
@@ -36,10 +36,10 @@
 | 步 | 环节 | Skill | 产出文档 | 何时 |
 |---|---|---|---|---|
 | 1 | 需求收集 | `lode-spec` | `docs/spec.md` | 必做 |
-| 2 | 设计规范 | `lode-brief` | `design-brief.md` | 可选 |
+| 2 | 设计规范 | `lode-brief` | `.lode/design/` | 可选 |
 | 3 | 设计图制作 | `lode-design` | 设计稿/原型 | 可选 |
-| 4 | 开发计划 | `lode-plan` | `dev-plan.md` | 必做 |
-| 5 | 项目开发 | `lode-build` | 代码 + `changelog.md` | 必做 |
+| 4 | 开发计划 | `lode-plan` | `.lode/plan/` | 必做 |
+| 5 | 项目开发 | `lode-build` | 代码 + per-slice commit | 必做 |
 | 6 | Bug 修复 | `lode-fix` | — | 按需 |
 | 7 | 代码审查 | `lode-review` | 审查报告 | 按需（收工门禁） |
 | 8 | 构建发布 | `lode-release` | Release | 按需 |
@@ -57,20 +57,24 @@
 **无论用哪种执行方式，都要做到（[规划与执行] 原文）：**
 - **上下文自带**：把相关需求自己读进来，不靠记忆和摘要；spawn 子 Agent 时把完整上下文复制给它。
 - **结果自检**：拿产出对照完成标准，**用证据说话，不用「应该没问题」**。
-- **派发纪律 + 熔断**：没达标就自己定位、停、重来，**循环到达标**；但设**熔断线**——**同一切片连续 3 次修复仍不过、或明显超出 token 预算**，立即停下找用户，别无限烧。门禁挡的是「坏的完成」，熔断挡的是「昂贵的不完成」。
+- **派发纪律 + 熔断**：没达标就自己定位、停、重来，**循环到达标**；但设**熔断线**——**同一切片连续 3 次修复仍不过、或明显超出 token 预算**，立即停下找用户，别无限烧。门禁挡的是「坏的完成」，熔断挡的是「昂贵的不完成」。（熔断有两层：这里是**模型自律**层——自己数到 3 就停；门禁 hook 另有一层**兜底**——被 Stop 连拦 ≥5 次强制放行交人，见 [门禁]。）
 - 有依赖的步骤串行，无依赖的并行；并行时不碰同一文件，冲突由主 Agent 合并。
 - 结果返回 → 主 Agent 合并拍板。决策权永远在主 Agent / 人。
 
 ## 文档驱动 + Session 卫生
 
-需求落 `docs/`（进 git），其余工作稿落 `.lode/`（gitignore）：`docs/spec.md → .lode/{design-brief,dev-plan} → 代码 → .lode/changelog.md`。
+需求与代码现状落 `docs/`（进 git：`spec.md` + `architecture.md`），其余工作稿落 `.lode/`（gitignore）：`docs/spec.md → .lode/{design,plan} → 代码 → per-slice commit → docs/architecture.md（每切片回写）`。
 - AI 跨环节不丢上下文，**靠的就是这些文档**（比 memory 更全）。进新环节先读上一环的文档。
 - **一个 Session 只开发一个功能**；下个功能开新 Session，让每个 Session 的上下文小而干净，模型注意力始终最佳。
 
 ## 门禁（确定性的判断 → 做成程序，不靠自觉）
 
 由 `hooks/` 强制（合并进 `.claude/settings.json`）：
-- **Stop hook `lode-gate.sh`**：遍历每个开发已开始（有 CHANGELOG）的工作区，收工前 ①实跑 `.lode/verify.sh`（编译+测试，退出码说话；代码指纹未变则用缓存跳过重跑）②校验 `review-passed` 非空、且含**当前代码指纹**（git 项目用内容级 diff，防「审完又改」「空 touch」「伪造」），任一不过即卡死。连续卡 ≥5 次触发**熔断**：放行交人，防「昂贵的不完成」。门禁**不只信模型写的 flag**——编译/测试由程序实跑。（老实说：程序铁判的只有①编译②测试+指纹防篡改；③代码审查④功能测试仍是**干净脑子的判断**，门禁只保证「标记没造假、代码没在审后改过」，证明不了「真审过」。）
+- **Stop hook `lode-gate.sh`**：遍历每个开发已开始（有 `.lode/.building` 标记，build 首切片 touch）的工作区，收工前两层硬检查，任一不过即卡死：
+  - ① 实跑 `.lode/verify.sh`（编译+测试，退出码说话；代码指纹未变则用缓存跳过重跑）。
+  - ② 校验 `review-passed` 非空、且含**当前代码指纹**（git 项目用内容级 diff，防「审完又改」「空 touch」「伪造」）。
+  - **熔断（hook 兜底层）**：连续卡 ≥5 次 → 放行交人，防「昂贵的不完成」（区别于 [编排纪律] 里模型自律的 3 次自停）。
+  - 门禁**不只信模型写的 flag**——编译/测试由程序实跑。（老实说：程序铁判的只有①编译②测试+指纹防篡改；③代码审查④功能测试仍是**干净脑子的判断**，门禁只保证「标记没造假、代码没在审后改过」，证明不了「真审过」。）
 - **UserPromptSubmit hook `lode-signal.sh`**：命中纠正/不满关键词就把信号追加进 `signals.jsonl`，喂给自进化。
 - **SessionStart hook `lode-session.sh`**：开局检查 signals 队列，非空就提示去跑 `lode-evolve`——把自进化的**触发**也做成程序，不靠模型记着。
 
@@ -97,15 +101,11 @@
 ## [总体规则]（原文要点）
 
 - **每步收尾、每次被拦都明确给下一步**：完成一步、或被门禁/熔断/审查拦下时，用一两行说清 ① 现在到哪了 ② 下一步敲什么 / 做什么（给具体命令）③ 要不要用户拍板。别让用户猜下一步。无论用户如何打断或提新问题，答完都回到这个引导。
-- **多步任务上看板（用户能看见进度）**：工作一旦拆成多个切片 / 多步，就镜像进**原生 todo 列表**并随状态同步，让用户在界面实时看到「拆了几片、做到哪、还差什么」。**底账仍是 `dev-plan.md` / `ledger.jsonl`**——todo 只是看板、不是真相源；**门禁 / 审计真过才许把 todo 勾完成**，不许只勾 todo 不过门禁。一两步的小事别硬上看板（噪音）。
+- **多步任务上看板（用户能看见进度）**：工作一旦拆成多个切片 / 多步，就镜像进**原生 todo 列表**并随状态同步，让用户在界面实时看到「拆了几片、做到哪、还差什么」。**底账仍是 `.lode/plan/`（最新）/ `ledger.jsonl`**——todo 只是看板、不是真相源；**门禁 / 审计真过才许把 todo 勾完成**，不许只勾 todo 不过门禁。一两步的小事别硬上看板（噪音）。
 - 始终使用中文交流（项目级偏好，按需调整）。
 - **联网优先**：涉及外部 API、框架版本，先搜索确认再动手。
-- **自进化**：用户纠正即抓成信号写入 `signals.jsonl`；`hooks/lode-signal.sh`（UserPromptSubmit）靠关键词只抓明显的，主 Agent 把 hook 没识别到的修正自己补记一条。
 - **Lodestar 流程内优先用 `lode-*` 系列**：环境里装了大量同义 skill（spec-driven-development、planning-and-task-breakdown、code-review…），主线各环明确走对应 `lode-*`，避免自动触发被同义 skill 抢走。
-- Session 启动时 `lode-session.sh`（SessionStart hook）自动检查 `signals`，非空就提示；主 Agent 据此 spawn `lode-evolve` 消化成 `proposals.md`。
-- **文档是单一真相源**：任何变更先改对应上游文档再动代码；上游文档变了，主 Agent 主动改下游并保持迭代同步。
-- **需求漂移随手回写 spec**：需求/范围的任何变更——无论在 `/lode-spec` 里、还是 build 中途、临时讨论、或你纠正时冒出来的——都**立刻回写 `docs/spec.md`**（就地更新当前真相）并在 `docs/spec-changelog.md` 追加一行（日期/改了什么/为什么），别只在代码里实现完就算。**spec 必须始终等于"现在真正要做的"，不许落后于代码。**
-- **spec 只演进不堆叠**：`docs/spec.md` 永远就地更新保持当前真相，被取代的条目移入文末归档而非累加；完整历史交给 git 与薄 `spec-changelog.md`，别让每天要读的 spec 被增量撑大。
+- **文档单一真相源、先文档后代码**：任何变更先改对应上游文档再动代码、上游变了主动改下游同步。落到 spec 上即：需求/范围变更（无论在 `/lode-spec`、build 中途、临时讨论还是你纠正时冒出来的）**立刻就地回写 `docs/spec.md`** 并在 `docs/spec-changelog.md` 记一行（日期/改了什么/为什么）；被取代的条目移入文末归档而非累加，历史交给 git 与薄 changelog。**spec 始终等于"现在真正要做的"，既不落后于代码、也不被增量撑大。**
 
 ## [文件结构]
 
@@ -113,16 +113,17 @@
 project/
 ├── docs/                            # 进 git 的交付文档（被跟踪）
 │   ├── spec.md                      # 需求：唯一持久真相源（就地演进、归档旧条目、不膨胀）
-│   └── spec-changelog.md            # 需求变更记录（一次一行，含日期）
+│   ├── spec-changelog.md            # 需求变更记录（一次一行，含日期）
+│   └── architecture.md              # 代码现状活地图（spec 建、build 持续更新；跨周期常驻，供回顾/审查）
 ├── .lode/                           # 运行态 / 工作稿（整个 gitignore，不进库）
-│   ├── system-map.md                # 现状活地图（spec 建、build 持续更新；可重建）
-│   ├── design-brief.md / mockups/   # 设计产物（可选；新设计就地取代旧的）
-│   ├── dev-plan.md                  # 开发计划（周期稿，release 后清理）
-│   ├── changelog.md                 # 每切片变更（含时间戳；周期稿，release 后清理）
+│   ├── plan/<功能简称>-<日期_时间>.md       # 开发计划：每次 replan 另存新版、不覆盖；下游读最新
+│   ├── design/<功能简称>-<日期_时间>.md   # 设计规范（可选）：每次重出另存新版、不覆盖
+│   ├── mockups/                      # 高保真原型（可选）
+│   ├── changelog.md                 # 每切片变更——**仅非 git 项目兜底**；git 项目用 per-slice commit message 记录（周期稿，release 后清理）
 │   ├── verify.sh                    # 确定性编译+测试（门禁实跑；可重建）
 │   ├── goal.md / ledger.jsonl       # 自动驾驶：目标 + 进度账本
 │   ├── signals.jsonl / proposals.md # 自进化：信号队列 + 建议
-│   └── review-passed / .verify-green / .gate-attempts  # 门禁记账（每次重生）
+│   └── .building / review-passed / .verify-green / .gate-attempts  # 门禁记账（.building=武装标记；每次重生）
 ├── <代码目录>/                       # 项目代码
 ├── CLAUDE.md                        # 主控顶层规则（本文件）
 └── .claude/
@@ -131,7 +132,9 @@ project/
     └── settings.json                # model / MCP / hooks（确定性门禁）
 ```
 
-> **两分原则**：`docs/spec.md` + `docs/spec-changelog.md` 是**持久、进 git** 的真相源；`.lode/` 全是工作态——要么周期内用完即清（dev-plan/changelog/design），要么可重建（system-map/verify），要么纯记账（ledger/signals/review-passed/缓存）。项目 `.gitignore` 应忽略 `.lode/`、跟踪 `docs/spec*.md`。
+> **两分原则**：`docs/`（`spec.md` + `spec-changelog.md` + `architecture.md`）是**持久、进 git** 的交付物——需求与代码现状两张图，供回顾/审查、跨机器跨队友不丢；`.lode/` 全是工作态——要么周期内用完即清（plan/design/非 git 时的 changelog），要么可重建（verify），要么纯记账（ledger/signals/review-passed/.building/缓存）。项目 `.gitignore` 应忽略 `.lode/`、跟踪 `docs/`。
+>
+> **周期产物 datify 约定**：`plan/`、`design/` 两类按 `<kind>/<功能简称>-<YYYY-MM-DD_HH_MM_SS>.md` 存，**每次生成新文件、绝不覆盖**——留演进史、replan/重设计可回溯（时间戳到秒防撞名）。`<功能简称>` = 对该文件所针对的**功能/任务的自然语言高度概括**，kebab-case 短名（如 `user-login`、`export-csv`、`dashboard-redesign`），目录表类型、文件名表功能，别用 `plan`/`design` 这种固定词。下游永远**按修改时间取最新**：`ls -t .lode/plan/*.md | head -1`（功能名在前，纯字典序排不出最新，必须用 `-t`）。`changelog.md` 不在此列——它仅是非 git 项目的兜底日志（git 项目记录归 per-slice commit），保持单文件 append-only。
 
 <!-- RULES:BEGIN — 每条格式：- [来源Signal] 规则。 -->
 <!-- RULES:END -->

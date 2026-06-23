@@ -1,6 +1,6 @@
 # 设计问题库（Design）— 起步模板
 
-> 由 lode-brief 使用。落地路径：`.lode/question-bank-design.md`。
+> 由 lode-brief 使用。读写都在本文件（`skills/lode-brief/references/question-bank-design.md`）——自进化只往这里增改，不另存 `.lode/` 副本。
 > 把"感觉"敲定成具体决策：选择题优先，必问反参考，被否就换一批。
 > 自进化只往这里增/改/删，每条对应一次真实失败。
 

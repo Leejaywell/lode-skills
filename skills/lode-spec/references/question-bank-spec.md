@@ -1,6 +1,6 @@
 # 需求问题库（Spec）— 起步模板
 
-> 由 lode-spec 使用。落地路径：`.lode/question-bank-spec.md`
+> 由 lode-spec 使用。读写都在本文件（`skills/lode-spec/references/question-bank-spec.md`）——自进化只往这里增改，不另存 `.lode/` 副本。
 > 这是「把怎么做删掉、把什么算好写厚」的载体：写的是**问题 + 接受/打回判据**，不是访谈脚本。
 > 自进化（Evolution）只往这里增/改/删，且每条改动对应一次真实失败。
 >
