@@ -9,6 +9,5 @@
   },
   "homepage": "https://github.com/Leejaywell/lode-skills",
   "repository": "https://github.com/Leejaywell/lode-skills",
-  "keywords": ["workflow", "spec-driven", "pm", "agent", "lodestar"],
-  "hooks": "./hooks/hooks.json"
+  "keywords": ["workflow", "spec-driven", "pm", "agent", "lodestar"]
 }
